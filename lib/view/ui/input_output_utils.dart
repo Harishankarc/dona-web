@@ -38,16 +38,20 @@ class IOUtils {
   static IconData deleteIcon = LucideIcons.delete;
 
   static Widget dataTable<T>(
-      List<String> head,
-      List<Object Function(T value)> valueFuntions,
-      List<T> data,
-      BuildContext context,
-      {bool Function(T value)? isdefault,
-      Color Function(T? value)? isDefaultcolor,
-      bool isaction = false,
-      List<double>? columnWidthRatio,
-      List<TableAction<T>>? actionList,
-      double? actionwidth}) {
+    List<String> head,
+    List<Object Function(T value)> valueFuntions,
+    List<T>? data,
+    BuildContext context, {
+    bool Function(T value)? isdefault,
+    Color Function(T? value)? isDefaultcolor,
+    bool isaction = false,
+    bool showHeader = true,
+    List<double>? columnWidthRatio,
+    List<TableAction<T>>? actionList,
+    double? actionwidth,
+    int fontweight = 600
+  }) {
+    List<T> safeData = data ?? [];
     return LayoutBuilder(builder: (context, constrains) {
       return SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -55,171 +59,179 @@ class IOUtils {
           scrollDirection: Axis.horizontal,
           child: ConstrainedBox(
             constraints: BoxConstraints(
-                minWidth:
-                    constrains.maxWidth > 700 ? constrains.maxWidth : 900),
+              minWidth: constrains.maxWidth > 700 ? constrains.maxWidth : 900,
+            ),
             child: table.DataTable(
-                sortAscending: true,
-                columnSpacing: 30,
-                onSelectAll: (_) => {},
-                headingRowColor:
-                    WidgetStatePropertyAll(contentTheme.primary.withAlpha(40)),
-                dataRowMaxHeight: 40,
-                dataRowMinHeight: 30,
-                columnWidthList: List.filled(head.length, 1000 / head.length) +
-                    [if (isaction) (actionwidth ?? 110)],
-                showBottomBorder: true,
-                headingRowHeight: 40,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                border: TableBorder.all(
-                    borderRadius: BorderRadius.circular(8),
-                    style: BorderStyle.solid,
-                    width: .4,
-                    color: Colors.grey),
-                columns: [
-                  ...head.map(
-                    (e) => table.DataColumn(
-                        label: MyText.labelLarge(
-                      e,
-                      fontSize: 12,
-                      color: contentTheme.primary,
-                    )),
-                  ),
-                  if (isaction)
-                    table.DataColumn(
-                        label: MyText.labelLarge(
-                      "Action",
-                      fontSize: 12,
-                      color: contentTheme.primary,
-                    )),
-                ],
-                rows: data
-                    .mapIndexed((index, d) => table.DataRow(
-                            color: isdefault == null
-                                ? null
-                                : isdefault(d)
-                                    ? WidgetStatePropertyAll(
-                                        isDefaultcolor == null
-                                            ? contentTheme.success.withAlpha(50)
-                                            : isDefaultcolor(d).withAlpha(50))
-                                    : null,
-                            cells: [
-                              ...valueFuntions.map((e) {
-                                final a = e(d);
+              sortAscending: true,
+              columnSpacing: 30,
+              onSelectAll: (_) => {},
+              headingRowColor:
+                  WidgetStatePropertyAll(contentTheme.primary.withAlpha(40)),
+              dataRowMaxHeight: 40,
+              dataRowMinHeight: 30,
+              columnWidthList: List.filled(head.length, 1000 / head.length) +
+                  [if (isaction) (actionwidth ?? 110)],
+              showBottomBorder: true,
+              headingRowHeight: showHeader ? 40 : 0, // ✅ Hide header height
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              border: TableBorder.all(
+                borderRadius: BorderRadius.circular(8),
+                style: BorderStyle.solid,
+                width: .4,
+                color: Colors.grey,
+              ),
 
-                                if (a is String) {
-                                  return table.DataCell(MyText.labelMedium(a,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      fontSize: 11,
-                                      fontWeight: 600));
-                                } else {
-                                  return table.DataCell(a as Widget);
-                                }
-                              }),
-                              if (isaction)
-                                table.DataCell(Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: actionList == null
+              // ✅ Always give columns — even when showHeader is false
+              columns: [
+                ...(head.isNotEmpty
+                    ? head.map(
+                        (e) => table.DataColumn(
+                          label: showHeader
+                              ? MyText.labelLarge(
+                                  e,
+                                  fontSize: 12,
+                                  color: contentTheme.primary,
+                                )
+                              : const SizedBox.shrink(), // invisible but valid
+                        ),
+                      )
+                    : [
+                        table.DataColumn(
+                          label: const SizedBox.shrink(),
+                        )
+                      ]),
+                if (isaction)
+                  table.DataColumn(
+                    label: showHeader
+                        ? MyText.labelLarge(
+                            "Action",
+                            fontSize: 12,
+                            color: contentTheme.primary,
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+              ],
+
+              rows: safeData
+                  .mapIndexed((index, d) => table.DataRow(
+                        color: isdefault == null
+                            ? null
+                            : isdefault(d)
+                                ? WidgetStatePropertyAll(isDefaultcolor == null
+                                    ? contentTheme.success.withAlpha(100)
+                                    : isDefaultcolor(d).withAlpha(100))
+                                : null,
+                        cells: [
+                          ...valueFuntions.map((e) {
+                            final a = e(d);
+                            if (a is String) {
+                              return table.DataCell(
+                                MyText.labelMedium(
+                                  a,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  fontSize: 11,
+                                  fontWeight: fontweight == 600 ?  600 : fontweight,
+                                ),
+                              );
+                            } else {
+                              return table.DataCell(a as Widget);
+                            }
+                          }),
+                          if (isaction)
+                            table.DataCell(Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: actionList == null
+                                  ? []
+                                  : actionList.isEmpty
                                       ? []
-                                      : actionList.isEmpty
-                                          ? []
-                                          : List.generate(
-                                              actionList.length +
-                                                  actionList.length -
-                                                  1,
-                                              (index) {
-                                                if (index.isOdd) {
-                                                  return const SizedBox(
-                                                    width: 5,
-                                                  );
-                                                } else {
-                                                  return (actionList[index ~/ 2]
-                                                                  .hideFuntion !=
-                                                              null &&
-                                                          actionList[index ~/ 2]
-                                                              .hideFuntion!(d))
-                                                      ? const SizedBox()
-                                                      : (actionList[index ~/ 2]
-                                                                  .permission !=
-                                                              null
-                                                          ? PermissionHandler(
-                                                              permission: actionList[
+                                      : List.generate(
+                                          actionList.length +
+                                              actionList.length -
+                                              1,
+                                          (index) {
+                                            if (index.isOdd) {
+                                              return const SizedBox(width: 5);
+                                            } else {
+                                              return (actionList[index ~/ 2]
+                                                              .hideFuntion !=
+                                                          null &&
+                                                      actionList[index ~/ 2]
+                                                          .hideFuntion!(d))
+                                                  ? const SizedBox()
+                                                  : (actionList[index ~/ 2]
+                                                              .permission !=
+                                                          null
+                                                      ? PermissionHandler(
+                                                          permission:
+                                                              actionList[
                                                                       index ~/
                                                                           2]
                                                                   .permission
                                                                   .toString(),
-                                                              child:
-                                                                  MyContainer(
-                                                                onTap:
-                                                                    () async {
-                                                                  actionList[
-                                                                          index ~/
-                                                                              2]
-                                                                      .function(
-                                                                          d);
-                                                                },
-                                                                padding:
-                                                                    MySpacing
-                                                                        .xy(8,
-                                                                            8),
-                                                                color: actionList[
-                                                                        index ~/
-                                                                            2]
-                                                                    .color
-                                                                    .withAlpha(
-                                                                        36),
-                                                                child: Icon(
-                                                                  actionList[
-                                                                          index ~/
-                                                                              2]
-                                                                      .iconData,
-                                                                  size: 14,
-                                                                  color: actionList[
-                                                                          index ~/
-                                                                              2]
-                                                                      .color,
-                                                                ),
-                                                              ))
-                                                          : MyContainer(
-                                                              onTap: () async {
-                                                                actionList[
-                                                                        index ~/
-                                                                            2]
-                                                                    .function(
-                                                                        d);
-                                                              },
-                                                              padding:
-                                                                  MySpacing.xy(
-                                                                      8, 8),
+                                                          child: MyContainer(
+                                                            onTap: () async {
+                                                              actionList[
+                                                                      index ~/
+                                                                          2]
+                                                                  .function(d);
+                                                            },
+                                                            padding:
+                                                                MySpacing.xy(
+                                                                    8, 8),
+                                                            color: actionList[
+                                                                    index ~/ 2]
+                                                                .color
+                                                                .withAlpha(36),
+                                                            child: Icon(
+                                                              actionList[
+                                                                      index ~/
+                                                                          2]
+                                                                  .iconData,
+                                                              size: 14,
                                                               color: actionList[
                                                                       index ~/
                                                                           2]
-                                                                  .color
-                                                                  .withAlpha(
-                                                                      36),
-                                                              child: Icon(
-                                                                actionList[
-                                                                        index ~/
-                                                                            2]
-                                                                    .iconData,
-                                                                size: 14,
-                                                                color: actionList[
-                                                                        index ~/
-                                                                            2]
-                                                                    .color,
-                                                              ),
-                                                            ));
-                                                }
-                                              },
-                                            ),
-                                ))
-                            ]))
-                    .toList()),
+                                                                  .color,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : MyContainer(
+                                                          onTap: () async {
+                                                            actionList[
+                                                                    index ~/ 2]
+                                                                .function(d);
+                                                          },
+                                                          padding: MySpacing.xy(
+                                                              8, 8),
+                                                          color: actionList[
+                                                                  index ~/ 2]
+                                                              .color
+                                                              .withAlpha(36),
+                                                          child: Icon(
+                                                            actionList[
+                                                                    index ~/ 2]
+                                                                .iconData,
+                                                            size: 14,
+                                                            color: actionList[
+                                                                    index ~/ 2]
+                                                                .color,
+                                                          ),
+                                                        ));
+                                            }
+                                          },
+                                        ),
+                            )),
+                        ],
+                      ))
+                  .toList(),
+            ),
           ),
         ),
       );
     });
   }
+
 
   static Widget dateField(
     String title,

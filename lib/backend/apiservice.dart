@@ -52,7 +52,7 @@ class APIService {
 
   static String drivecode = "NARAYANATRAVELS";
   static String baseurl =
-      'https://narayanatravelsapi.kernalscapeserver.in/narayanatravels/';
+      'https://donaapi.kernalscapeserver.in/dona/';
   static Dio dio = initializeDio();
 
   static Dio initializeDio() {

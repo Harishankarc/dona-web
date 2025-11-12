@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen>
                     children: [
                       MySpacing.height(24),
                       MyContainer(
-                          height: 75,
+                          height: 200,
                           paddingAll: 0,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           child: Image.asset(

@@ -265,7 +265,7 @@ class AppStyle {
       cardRadius: AppStyle.cardRadius.medium,
       buttonRadius: AppStyle.buttonRadius.medium,
       defaultBreadCrumbItem:
-          MyBreadcrumbItem(name: 'Narayana travels', route: '/client/home'),
+          MyBreadcrumbItem(name: 'DONA', route: '/client/home'),
     ));
     bool isMobile = true;
     try {

@@ -7,6 +7,7 @@ import 'package:LeLaundrette/helpers/services/storage/local_storage.dart';
 import 'package:LeLaundrette/view/auth/login_screen.dart';
 import 'package:LeLaundrette/view/dashboard/analytics_screen.dart';
 import 'package:LeLaundrette/view/dashboard/collections/collection_list_screen.dart';
+import 'package:LeLaundrette/view/dashboard/daybook/add_daybook_screen.dart';
 import 'package:LeLaundrette/view/dashboard/drivers/add_driver_screen.dart';
 import 'package:LeLaundrette/view/dashboard/drivers/driver_list_screen.dart';
 import 'package:LeLaundrette/view/dashboard/drivers/drivers_document_screen.dart';
@@ -113,6 +114,11 @@ getPageRoute() {
     GetPage(
       name: '/reminder/listreminder',
       page: () => const ReminderDocumentsListScreen(),
+      middlewares: [PermissionMiddleware(permission: 'reminder_reminder')],
+    ),
+    GetPage(
+      name: '/daybook/adddaybook',
+      page: () => const AddDayBookScreen(),
       middlewares: [PermissionMiddleware(permission: 'reminder_reminder')],
     ),
     GetPage(

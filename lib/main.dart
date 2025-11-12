@@ -35,7 +35,7 @@ Future<void> main() async {
   ));
 }
 
-ValueNotifier<String> title = ValueNotifier("Narayana travels");
+ValueNotifier<String> title = ValueNotifier("DONA");
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

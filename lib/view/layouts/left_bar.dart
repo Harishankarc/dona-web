@@ -190,6 +190,19 @@ class _LeftBarState extends State<LeftBar>
                         ),
                       ]),
                   MenuWidget(
+                      permission: 'reminder_main',
+                      iconData: LucideIcons.bell,
+                      isCondensed: isCondensed,
+                      title: "DayBook",
+                      children: [
+                        MenuItem(
+                          permission: 'reminder_reminder',
+                          title: 'Add Voucher',
+                          route: '/daybook/adddaybook',
+                          isCondensed: widget.isCondensed,
+                        ),
+                      ]),
+                  MenuWidget(
                     permission: 'settings_main',
                     iconData: LucideIcons.settings,
                     isCondensed: widget.isCondensed,
