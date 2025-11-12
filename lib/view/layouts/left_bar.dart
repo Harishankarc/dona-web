@@ -100,15 +100,15 @@ class _LeftBarState extends State<LeftBar>
                     route: '/dashboard/analytics',
                   ),
                   MenuWidget(
-                      permission: 'collection_main',
-                      iconData: LucideIcons.landmark,
+                      permission: 'reminder_main',
+                      iconData: LucideIcons.book,
                       isCondensed: isCondensed,
-                      title: "Collection",
+                      title: "DayBook",
                       children: [
                         MenuItem(
-                          permission: 'collection_collection',
-                          title: 'List Collections',
-                          route: '/collections/listcollections',
+                          permission: 'reminder_reminder',
+                          title: 'Add Voucher',
+                          route: '/daybook/adddaybook',
                           isCondensed: widget.isCondensed,
                         ),
                       ]),
@@ -137,21 +137,19 @@ class _LeftBarState extends State<LeftBar>
                           route: '/vehicles/listvehicles',
                           isCondensed: widget.isCondensed,
                         ),
+                      ]),
+                  MenuWidget(
+                      permission: 'driver_main',
+                      iconData: LucideIcons.userCheck2,
+                      isCondensed: isCondensed,
+                      title: "Subledgers",
+                      children: [
                         MenuItem(
-                            permission: 'vehicle_vehicle_add',
-                            title: 'Add Vehicle',
-                            route: '/vehicles/addvehicle',
-                            isCondensed: widget.isCondensed),
-                        MenuItem(
-                            permission: 'vehicle_vehicle_documents',
-                            title: 'Documents',
-                            route: '/vehicles/documentslist',
-                            isCondensed: widget.isCondensed),
-                        MenuItem(
-                            permission: 'vehicle_vehicle_tracking',
-                            title: 'Tracking',
-                            route: '/vehicles/tracking',
-                            isCondensed: widget.isCondensed),
+                          permission: 'driver_driver',
+                          title: 'Customers',
+                          route: '/subledgers/customers',
+                          isCondensed: widget.isCondensed,
+                        ),
                       ]),
                   MenuWidget(
                       permission: 'driver_main',
@@ -165,42 +163,6 @@ class _LeftBarState extends State<LeftBar>
                           route: '/drivers/listdrivers',
                           isCondensed: widget.isCondensed,
                         ),
-                        MenuItem(
-                            permission: 'driver_driver_add',
-                            title: 'Add Driver',
-                            route: '/drivers/adddriver',
-                            isCondensed: widget.isCondensed),
-                        MenuItem(
-                            permission: 'driver_driver_documents',
-                            title: 'Documents',
-                            route: '/drivers/documentslist',
-                            isCondensed: widget.isCondensed),
-                      ]),
-                  MenuWidget(
-                      permission: 'reminder_main',
-                      iconData: LucideIcons.bell,
-                      isCondensed: isCondensed,
-                      title: "Reminder",
-                      children: [
-                        MenuItem(
-                          permission: 'reminder_reminder',
-                          title: 'Reminder',
-                          route: '/reminder/listreminder',
-                          isCondensed: widget.isCondensed,
-                        ),
-                      ]),
-                  MenuWidget(
-                      permission: 'reminder_main',
-                      iconData: LucideIcons.bell,
-                      isCondensed: isCondensed,
-                      title: "DayBook",
-                      children: [
-                        MenuItem(
-                          permission: 'reminder_reminder',
-                          title: 'Add Voucher',
-                          route: '/daybook/adddaybook',
-                          isCondensed: widget.isCondensed,
-                        ),
                       ]),
                   MenuWidget(
                     permission: 'settings_main',
@@ -208,36 +170,6 @@ class _LeftBarState extends State<LeftBar>
                     isCondensed: widget.isCondensed,
                     title: 'Settings',
                     children: [
-                      MenuItem(
-                        permission: 'settings_models',
-                        title: 'Models',
-                        route: '/settings/models',
-                        isCondensed: widget.isCondensed,
-                      ),
-                      MenuItem(
-                        permission: 'settings_brands',
-                        title: 'Brands',
-                        route: '/settings/brands',
-                        isCondensed: widget.isCondensed,
-                      ),
-                      MenuItem(
-                        permission: 'settings_category',
-                        title: 'Category',
-                        route: '/settings/category',
-                        isCondensed: widget.isCondensed,
-                      ),
-                      MenuItem(
-                        permission: 'settings_relationship',
-                        title: 'Relationship',
-                        route: '/settings/relationship',
-                        isCondensed: widget.isCondensed,
-                      ),
-                      MenuItem(
-                        permission: 'settings_documenttype',
-                        title: 'Document Types',
-                        route: '/settings/documenttypes',
-                        isCondensed: widget.isCondensed,
-                      ),
                       MenuItem(
                         permission: 'settings_branches',
                         title: 'Branches',

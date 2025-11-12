@@ -1,30 +1,17 @@
 import 'dart:io';
 
 import 'package:LeLaundrette/backend/apiservice.dart';
-import 'package:LeLaundrette/controller/dashboard/collections/collection_list_controller.dart';
 import 'package:LeLaundrette/helpers/services/auth_service.dart';
 import 'package:LeLaundrette/helpers/services/storage/local_storage.dart';
 import 'package:LeLaundrette/view/auth/login_screen.dart';
 import 'package:LeLaundrette/view/dashboard/analytics_screen.dart';
-import 'package:LeLaundrette/view/dashboard/collections/collection_list_screen.dart';
 import 'package:LeLaundrette/view/dashboard/daybook/add_daybook_screen.dart';
-import 'package:LeLaundrette/view/dashboard/drivers/add_driver_screen.dart';
 import 'package:LeLaundrette/view/dashboard/drivers/driver_list_screen.dart';
-import 'package:LeLaundrette/view/dashboard/drivers/drivers_document_screen.dart';
-import 'package:LeLaundrette/view/dashboard/hr/leaves_list_screen.dart';
-import 'package:LeLaundrette/view/dashboard/reminder/reminder_list_screen.dart';
 import 'package:LeLaundrette/view/dashboard/settings/branches/branches_list_screen.dart';
-import 'package:LeLaundrette/view/dashboard/settings/brands/brands_screen.dart';
-import 'package:LeLaundrette/view/dashboard/settings/category/category_screen.dart';
-import 'package:LeLaundrette/view/dashboard/settings/documenttype/documenttype_screen.dart';
-import 'package:LeLaundrette/view/dashboard/settings/models/models_screen.dart';
-import 'package:LeLaundrette/view/dashboard/settings/relationship/relationship_screen.dart';
 import 'package:LeLaundrette/view/dashboard/settings/users/user_list_screen.dart';
 import 'package:LeLaundrette/view/dashboard/settings/users/usergroup_screen.dart';
-import 'package:LeLaundrette/view/dashboard/vehicles/add_vehicle_screen.dart';
-import 'package:LeLaundrette/view/dashboard/vehicles/vehicle_document_screen.dart';
+import 'package:LeLaundrette/view/dashboard/subledgers/customer_list_screen.dart';
 import 'package:LeLaundrette/view/dashboard/vehicles/vehicle_list_screen.dart';
-import 'package:LeLaundrette/view/dashboard/vehicles/vehicle_tracking_screen.dart';
 import 'package:LeLaundrette/view/ui/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -61,60 +48,19 @@ getPageRoute() {
       middlewares: [PermissionMiddleware(permission: 'dashboard_main')],
     ),
     GetPage(
-      name: '/collections/listcollections',
-      page: () => const CollectionsListScreen(),
-      middlewares: [PermissionMiddleware(permission: 'collection_collection')],
-    ),
-    GetPage(
-      name: '/hr/leaves',
-      page: () => const LeavesListScreen(),
-      middlewares: [PermissionMiddleware(permission: 'hr_leave_view')],
-    ),
-    GetPage(
       name: '/vehicles/listvehicles',
       page: () => const VehiclesListScreen(),
       middlewares: [PermissionMiddleware(permission: 'vehicle_vehicle')],
     ),
     GetPage(
-      name: '/vehicles/tracking',
-      page: () => const VehiclesTrackingScreen(),
-      middlewares: [
-        PermissionMiddleware(permission: 'vehicle_vehicle_tracking')
-      ],
-    ),
-    GetPage(
-      name: '/vehicles/addvehicle',
-      page: () => const AddVehicleScreen(),
-      middlewares: [PermissionMiddleware(permission: 'vehicle_vehicle_add')],
+      name: '/subledgers/customers',
+      page: () => const CustomerListScreen(),
+      middlewares: [PermissionMiddleware(permission: 'driver_driver')],
     ),
     GetPage(
       name: '/drivers/listdrivers',
       page: () => const DriversListScreen(),
       middlewares: [PermissionMiddleware(permission: 'driver_driver')],
-    ),
-    GetPage(
-      name: '/drivers/adddriver',
-      page: () => const AddDriverScreen(),
-      middlewares: [PermissionMiddleware(permission: 'driver_driver_add')],
-    ),
-    GetPage(
-      name: '/vehicles/documentslist',
-      page: () => const VehiclesDocumentScreen(),
-      middlewares: [
-        PermissionMiddleware(permission: 'vehicle_vehicle_documents')
-      ],
-    ),
-    GetPage(
-      name: '/drivers/documentslist',
-      page: () => const DriversDocumentScreen(),
-      middlewares: [
-        PermissionMiddleware(permission: 'driver_driver_documents')
-      ],
-    ),
-    GetPage(
-      name: '/reminder/listreminder',
-      page: () => const ReminderDocumentsListScreen(),
-      middlewares: [PermissionMiddleware(permission: 'reminder_reminder')],
     ),
     GetPage(
       name: '/daybook/adddaybook',
@@ -125,31 +71,6 @@ getPageRoute() {
       name: '/settings/usergroup',
       page: () => const UserGroupScreen(),
       middlewares: [PermissionMiddleware(permission: 'settings_user-groups')],
-    ),
-    GetPage(
-      name: '/settings/models',
-      page: () => const ModelsListScreen(),
-      middlewares: [PermissionMiddleware(permission: 'settings_models')],
-    ),
-    GetPage(
-      name: '/settings/brands',
-      page: () => const BrandsListScreen(),
-      middlewares: [PermissionMiddleware(permission: 'settings_brands')],
-    ),
-    GetPage(
-      name: '/settings/category',
-      page: () => const CategoryListScreen(),
-      middlewares: [PermissionMiddleware(permission: 'settings_category')],
-    ),
-    GetPage(
-      name: '/settings/relationship',
-      page: () => const RelationShipListScreen(),
-      middlewares: [PermissionMiddleware(permission: 'settings_relationship')],
-    ),
-    GetPage(
-      name: '/settings/documenttypes',
-      page: () => const DocumentTypeScreen(),
-      middlewares: [PermissionMiddleware(permission: 'settings_documenttype')],
     ),
     GetPage(
         name: '/settings/users',

@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return AuthLayout(
       child: GetBuilder(
-        tag: 'laundry_login_screen',
+        tag: 'dona_login_screen',
         init: controller,
         builder: (controller) {
           return Padding(
@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen>
                     children: [
                       MySpacing.height(24),
                       MyContainer(
-                          height: 200,
+                          height: 130,
                           paddingAll: 0,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           child: Image.asset(

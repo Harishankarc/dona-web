@@ -51,8 +51,7 @@ class APIService {
   static String appfont = 'Poppins';
 
   static String drivecode = "NARAYANATRAVELS";
-  static String baseurl =
-      'https://donaapi.kernalscapeserver.in/dona/';
+  static String baseurl = 'https://donaapi.kernalscapeserver.in/dona/';
   static Dio dio = initializeDio();
 
   static Dio initializeDio() {
@@ -822,54 +821,25 @@ class APIService {
   }
 
   static Future<Map<String, dynamic>> createVehicleAPI(
-      String name,
-      String modelId,
-      String brandId,
-      String categoryId,
-      String registrationNumber,
-      String chassisNumber,
-      String engineNumber,
-      String dateofreg,
-      String assignedToId,
-      String photo,
-      String createdBy,
-      String insurancevalidupto,
-      String fitnessvalidupto,
-      String taxvalidupto,
-      String permitvalidupto,
-      String metervalidupto,
-      String puccvalidupto,
-      String gas1validupto,
-      String gas2validupto,
-      String gpsimei,
-      String gpssimnumber,
-      String gpsimsinumber,
-      String vehiclestatus) async {
+    String name,
+    String registration,
+    String chargeperhour,
+    String minimumcharge,
+    String needshifting,
+    String shiftingcharge,
+    String assignedto,
+    String createdby,
+  ) async {
     try {
       final data = {
         "name": name,
-        "model_id": modelId,
-        "brand_id": brandId,
-        "category_id": categoryId,
-        "registration": registrationNumber,
-        "chasis_number": chassisNumber,
-        "engine_number": engineNumber,
-        "date_of_reg": dateofreg,
-        "assigned_to": assignedToId,
-        "photo_of_vehicle": photo,
-        "created_by": createdBy,
-        "insurance_valid_upto": insurancevalidupto,
-        "fitness_valid_upto": fitnessvalidupto,
-        "tax_valid_upto": taxvalidupto,
-        "permit_valid_upto": permitvalidupto,
-        "meter_valid_upto": metervalidupto,
-        "pucc_valid_upto": puccvalidupto,
-        "gas1_valid_upto": gas1validupto,
-        "gas2_valid_upto": gas2validupto,
-        "gps_imei": gpsimei,
-        "gps_sim_number": gpssimnumber,
-        "gps_imsi_number": gpsimsinumber,
-        "vehicle_status": vehiclestatus
+        "registration": registration,
+        "charge_per_hour": chargeperhour,
+        "minimum_charge": minimumcharge,
+        "need_shifting": needshifting,
+        "shifting_charge": shiftingcharge,
+        "assigned_to": assignedto,
+        "created_by": createdby
       };
 
       print(data);
@@ -1239,7 +1209,7 @@ class APIService {
     }
   }
 
-  static Future<Map<String, dynamic>> getDriverListAPI(
+  static Future<Map<String, dynamic>> getSubledgerListAPI(
     String term,
     String subledgertype,
   ) async {
@@ -2826,8 +2796,6 @@ class APIService {
       String branchid,
       String secondaryphone,
       String address,
-      String latitude,
-      String longitude,
       String subledgerType,
       String userGroupId,
       String username,
@@ -2841,8 +2809,6 @@ class APIService {
         "branch_id": branchid,
         "secondary_phone": secondaryphone,
         "address": address,
-        "latitude": latitude,
-        "longitude": longitude,
         "subledger_type": subledgerType,
         "user_group_id": userGroupId,
         "username": username,
@@ -2862,8 +2828,6 @@ class APIService {
       String branchid,
       String secondaryphone,
       String address,
-      String latitude,
-      String longitude,
       String subledgerType,
       String userGroupId,
       String username,
@@ -2876,8 +2840,6 @@ class APIService {
         "phone": phone,
         "secondary_phone": secondaryphone,
         "address": address,
-        "latitude": latitude,
-        "longitude": longitude,
         "subledger_type": subledgerType,
         "user_group_id": userGroupId,
         "username": username,

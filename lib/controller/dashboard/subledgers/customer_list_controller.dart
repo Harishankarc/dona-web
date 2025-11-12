@@ -6,7 +6,7 @@ import 'package:LeLaundrette/controller/my_controller.dart';
 import 'package:LeLaundrette/helpers/services/storage/local_storage.dart';
 import 'package:LeLaundrette/model/branch_model.dart';
 
-class DriversListController extends MyController {
+class CustomerListController extends MyController {
   TextEditingController searchcontroller = TextEditingController();
 
   TextEditingController namecontroller = TextEditingController();
@@ -14,7 +14,7 @@ class DriversListController extends MyController {
   TextEditingController secondaryphonecontroller = TextEditingController();
   TextEditingController addresscontroller = TextEditingController();
 
-  String subledgertype = "1";
+  String subledgertype = "3";
 
   @override
   void onInit() {

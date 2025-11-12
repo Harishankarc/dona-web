@@ -1,6 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:LeLaundrette/view/layouts/image_builder.dart';
+import 'package:LeLaundrette/controller/dashboard/subledgers/customer_list_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:LeLaundrette/backend/apiservice.dart';
@@ -24,21 +22,19 @@ import 'package:LeLaundrette/view/ui/input_output_utils.dart';
 import 'package:LeLaundrette/view/ui/toast_message_controller.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:path/path.dart' as p;
-import 'package:http/http.dart' as http;
 
-class DriversListScreen extends StatefulWidget {
-  const DriversListScreen({
+class CustomerListScreen extends StatefulWidget {
+  const CustomerListScreen({
     super.key,
   });
 
   @override
-  State<DriversListScreen> createState() => _DriversListScreenState();
+  State<CustomerListScreen> createState() => _CustomerListScreenState();
 }
 
-class _DriversListScreenState extends State<DriversListScreen>
+class _CustomerListScreenState extends State<CustomerListScreen>
     with SingleTickerProviderStateMixin, UIMixin {
-  late DriversListController controller = Get.put(DriversListController());
+  late CustomerListController controller = Get.put(CustomerListController());
   late OutlineInputBorder _outlineInputBorder;
   late ToastMessageController toastcontroller;
 
@@ -66,7 +62,7 @@ class _DriversListScreenState extends State<DriversListScreen>
     return Layout(
       child: GetBuilder(
           init: controller,
-          tag: 'drivers_controller',
+          tag: 'customers_controller',
           builder: (controller) {
             return controller.loading
                 ? MyFlex(
@@ -88,14 +84,14 @@ class _DriversListScreenState extends State<DriversListScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const MyText.titleMedium(
-                            "Drivers",
+                            "Customers",
                             fontSize: 18,
                             fontWeight: 600,
                           ),
                           MyBreadcrumb(
                             children: [
                               MyBreadcrumbItem(name: 'Dashboard'),
-                              MyBreadcrumbItem(name: 'Drivers'),
+                              MyBreadcrumbItem(name: 'Customers'),
                             ],
                           ),
                         ],
@@ -132,7 +128,7 @@ class _DriversListScreenState extends State<DriversListScreen>
                       elevation: 0.5,
                       onPressed: () async {
                         controller.setData(null);
-                        addDriver();
+                        addCustomer();
                       },
                       backgroundColor: contentTheme.primary,
                       child: Row(
@@ -145,7 +141,7 @@ class _DriversListScreenState extends State<DriversListScreen>
                             size: 20,
                           ),
                           MyText.bodyMedium(
-                            'Add Driver',
+                            'Add Customer',
                             fontSize: 12,
                             color: contentTheme.onPrimary,
                           ),
@@ -186,7 +182,7 @@ class _DriversListScreenState extends State<DriversListScreen>
                     permission: 'driver_driver_edit',
                     function: (data) {
                       controller.setData(data);
-                      editDriver(data["id"].toString());
+                      editCustomer(data["id"].toString());
                     },
                     iconData: IOUtils.editIcon,
                     color: contentTheme.warning),
@@ -212,7 +208,7 @@ class _DriversListScreenState extends State<DriversListScreen>
     });
   }
 
-  void addDriver() {
+  void addCustomer() {
     showGeneralDialog(
         barrierColor: Colors.transparent,
         context: context,
@@ -241,7 +237,7 @@ class _DriversListScreenState extends State<DriversListScreen>
                               const Padding(
                                 padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                                 child: MyText.labelLarge(
-                                  'Add Driver',
+                                  'Add Customer',
                                   fontWeight: 600,
                                   fontSize: 16,
                                 ),
@@ -389,7 +385,7 @@ class _DriversListScreenState extends State<DriversListScreen>
         });
   }
 
-  void editDriver(String id) {
+  void editCustomer(String id) {
     showGeneralDialog(
         barrierColor: Colors.transparent,
         context: context,
@@ -418,7 +414,7 @@ class _DriversListScreenState extends State<DriversListScreen>
                               const Padding(
                                 padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                                 child: MyText.labelLarge(
-                                  'Edit Driver',
+                                  'Edit Customer',
                                   fontWeight: 600,
                                   fontSize: 16,
                                 ),
