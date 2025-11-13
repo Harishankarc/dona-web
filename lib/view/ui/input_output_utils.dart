@@ -38,19 +38,18 @@ class IOUtils {
   static IconData deleteIcon = LucideIcons.delete;
 
   static Widget dataTable<T>(
-    List<String> head,
-    List<Object Function(T value)> valueFuntions,
-    List<T>? data,
-    BuildContext context, {
-    bool Function(T value)? isdefault,
-    Color Function(T? value)? isDefaultcolor,
-    bool isaction = false,
-    bool showHeader = true,
-    List<double>? columnWidthRatio,
-    List<TableAction<T>>? actionList,
-    double? actionwidth,
-    int fontweight = 600
-  }) {
+      List<String> head,
+      List<Object Function(T value)> valueFuntions,
+      List<T>? data,
+      BuildContext context,
+      {bool Function(T value)? isdefault,
+      Color Function(T? value)? isDefaultcolor,
+      bool isaction = false,
+      bool showHeader = true,
+      List<double>? columnWidthRatio,
+      List<TableAction<T>>? actionList,
+      double? actionwidth,
+      int fontweight = 600}) {
     List<T> safeData = data ?? [];
     return LayoutBuilder(builder: (context, constrains) {
       return SingleChildScrollView(
@@ -131,7 +130,8 @@ class IOUtils {
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                   fontSize: 11,
-                                  fontWeight: fontweight == 600 ?  600 : fontweight,
+                                  fontWeight:
+                                      fontweight == 600 ? 600 : fontweight,
                                 ),
                               );
                             } else {
@@ -231,7 +231,6 @@ class IOUtils {
       );
     });
   }
-
 
   static Widget dateField(
     String title,
