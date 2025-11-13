@@ -14,7 +14,6 @@ import 'package:LeLaundrette/helpers/widgets/my_flex_item.dart';
 import 'package:LeLaundrette/helpers/widgets/my_spacing.dart';
 import 'package:LeLaundrette/helpers/widgets/my_text.dart';
 import 'package:LeLaundrette/view/layouts/delete_view.dart';
-import 'package:LeLaundrette/view/layouts/image_builder.dart';
 import 'package:LeLaundrette/view/layouts/layout.dart';
 import 'package:LeLaundrette/view/ui/input_output_utils.dart';
 import 'package:LeLaundrette/view/ui/toast_message_controller.dart';
@@ -23,8 +22,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:path/path.dart' as p;
-import 'package:http/http.dart' as http;
 
 class VehiclesListScreen extends StatefulWidget {
   const VehiclesListScreen({
