@@ -40,12 +40,12 @@ class _BranchesListScreenState extends State<BranchesListScreen>
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _outlineInputBorder = OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
       );
       toastcontroller = ToastMessageController(this);
-      await controller.loadData();
+      controller.loadData();
     });
     super.initState();
   }
@@ -187,8 +187,8 @@ class _BranchesListScreenState extends State<BranchesListScreen>
                 TableAction(
                     permission: 'settings_branches_delete',
                     function: (data) async {
-                      DeleteView.deleteDialog(data['id'].toString(), 'branches',
-                          "Branch", toastMessage, controller.loadData, context);
+                      DeleteView.deleteDialog(data['id'].toString(), 'branch',
+                          "branch", toastMessage, controller.loadData, context);
                     },
                     iconData: IOUtils.deleteIcon,
                     color: contentTheme.danger)
@@ -285,7 +285,7 @@ class _BranchesListScreenState extends State<BranchesListScreen>
                                         controller.setLoading(true);
                                         final resp =
                                             await APIService.addMasterDetails(
-                                          'branches',
+                                          'branch',
                                           controller.namecontroller.text,
                                           LocalStorage.getLoggedUserdata()[
                                                   'userid']
@@ -410,7 +410,7 @@ class _BranchesListScreenState extends State<BranchesListScreen>
                                         controller.setLoading(true);
                                         final resp =
                                             await APIService.editMasterDetails(
-                                                'branches',
+                                                'branch',
                                                 controller.selecteddata['id']
                                                     .toString(),
                                                 controller.namecontroller.text);

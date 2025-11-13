@@ -857,56 +857,27 @@ class APIService {
   }
 
   static Future<Map<String, dynamic>> editVehicleAPI(
-      String id,
-      String name,
-      String modelId,
-      String brandId,
-      String categoryId,
-      String registrationNumber,
-      String chassisNumber,
-      String engineNumber,
-      String dateofreg,
-      String assignedToId,
-      String photo,
-      String updatedby,
-      String insurancevalidupto,
-      String fitnessvalidupto,
-      String taxvalidupto,
-      String permitvalidupto,
-      String metervalidupto,
-      String puccvalidupto,
-      String gas1validupto,
-      String gas2validupto,
-      String gpsimei,
-      String gpssimnumber,
-      String gpsimsinumber,
-      String vehiclestatus) async {
+    String id,
+    String name,
+    String registration,
+    String chargeperhour,
+    String minimumcharge,
+    String needshifting,
+    String shiftingcharge,
+    String assignedto,
+    String updatedby,
+  ) async {
     try {
       final data = {
         "id": id,
         "name": name,
-        "model_id": modelId,
-        "brand_id": brandId,
-        "category_id": categoryId,
-        "registration": registrationNumber,
-        "chasis_number": chassisNumber,
-        "engine_number": engineNumber,
-        "date_of_reg": dateofreg,
-        "assigned_to": assignedToId,
-        "photo_of_vehicle": photo,
-        "updated_by": updatedby,
-        "insurance_valid_upto": insurancevalidupto,
-        "fitness_valid_upto": fitnessvalidupto,
-        "tax_valid_upto": taxvalidupto,
-        "permit_valid_upto": permitvalidupto,
-        "meter_valid_upto": metervalidupto,
-        "pucc_valid_upto": puccvalidupto,
-        "gas1_valid_upto": gas1validupto,
-        "gas2_valid_upto": gas2validupto,
-        "gps_imei": gpsimei,
-        "gps_sim_number": gpssimnumber,
-        "gps_imsi_number": gpsimsinumber,
-        "vehicle_status": vehiclestatus
+        "registration": registration,
+        "charge_per_hour": chargeperhour,
+        "minimum_charge": minimumcharge,
+        "need_shifting": needshifting,
+        "shifting_charge": shiftingcharge,
+        "assigned_to": assignedto,
+        "updated_by": updatedby
       };
 
       print(data);
@@ -1120,6 +1091,24 @@ class APIService {
     }
   }
 
+  static Future<List<dynamic>> getVehicleListByModelAPI(
+    String term,
+  ) async {
+    try {
+      final response = await dio
+          .get('vehicle/listvehicles', queryParameters: {"search": term});
+      if (response.data['status'] == 'success') {
+        return response.data['data'] as List;
+      } else {
+        return [];
+      }
+    } on DioException catch (e) {
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   static Future<Map<String, dynamic>> getVehicleTrackingListAPI(
       String term, String filterdate) async {
     try {
@@ -1221,6 +1210,25 @@ class APIService {
       return {"status": "failed", "message": e};
     } catch (e) {
       return {"status": "failed", "message": e};
+    }
+  }
+
+  static Future<List<dynamic>> getSubledgerListByModelAPI(
+    String term,
+    String subledgertype,
+  ) async {
+    try {
+      final response = await dio.get('driver/listdrivers',
+          queryParameters: {"subledger_type": subledgertype, "search": term});
+      if (response.data['status'] == 'success') {
+        return response.data['data'] as List;
+      } else {
+        return [];
+      }
+    } on DioException catch (e) {
+      return [];
+    } catch (e) {
+      return [];
     }
   }
 
@@ -1407,64 +1415,21 @@ class APIService {
     }
   }
 
-  static Future<List<dynamic>> getDriverRelationShipTypes(String term) async {
-    try {
-      final response = await dio.get(
-        'masters/listrelationships',
-        queryParameters: {'search': term},
-      );
-
-      // Ensure response.data is not null
-      if (response.data == null) return [];
-
-      // Ensure data exists
-      if (response.data['status'] == 'success' &&
-          response.data['data'] is List) {
-        return response.data['data'];
-      } else {
-        return [];
-      }
-    } catch (e) {
-      print('Exception in getVehicleModelTypes: $e');
-      return [];
-    }
-  }
-
-  static Future<List<dynamic>> getDocumentTypes(
-      String term, String documentfor) async {
-    try {
-      final response = await dio.get(
-        'masters/listdocumenttypes',
-        queryParameters: {'search': term, "document_for": documentfor},
-      );
-
-      if (response.data == null) return [];
-
-      if (response.data['status'] == 'success' &&
-          response.data['data'] is List) {
-        return response.data['data'];
-      } else {
-        return [];
-      }
-    } catch (e) {
-      print('Exception in getVehicleModelTypes: $e');
-      return [];
-    }
-  }
-
-  static Future<Map<String, dynamic>> getPaymentTypes() async {
+  static Future<List<dynamic>> getPaymentTypes() async {
     try {
       final response = await dio.get(
         'masters/listpaymenttypes',
       );
-      print(response.data);
-      return response.data;
+      if (response.data['status'] == 'success') {
+        return response.data['data'] as List;
+      } else {
+        return [];
+      }
     } on DioException catch (e) {
-      print(e);
-      throw Exception(e);
+      return [];
     } catch (e) {
       print(e);
-      throw Exception(e);
+      return [];
     }
   }
 
@@ -1890,6 +1855,7 @@ class APIService {
   static Future<Map<String, dynamic>> getUsersListAPI(
       String usergroupid, String term, String branchid) async {
     try {
+      print({"usergroupid": usergroupid, "term": term, "branch_id": branchid});
       final response = await dio.post('users/userslist', data: {
         "usergroupid": usergroupid,
         "term": term,
@@ -2800,7 +2766,8 @@ class APIService {
       String userGroupId,
       String username,
       String password,
-      String updatedBy) async {
+      String updatedBy,
+      String salaryperday) async {
     try {
       final response = await dio.put('subledger/editsubledger', data: {
         "id": id,
@@ -2813,7 +2780,8 @@ class APIService {
         "user_group_id": userGroupId,
         "username": username,
         "password": password,
-        "updated_by": updatedBy
+        "updated_by": updatedBy,
+        "salary_per_day": salaryperday
       });
       print(response.data);
       return response.data;
@@ -2832,7 +2800,8 @@ class APIService {
       String userGroupId,
       String username,
       String password,
-      String createdBy) async {
+      String createdBy,
+      String salaryperday) async {
     try {
       final response = await dio.post('subledger/addsubledger', data: {
         "name": name,
@@ -2844,7 +2813,8 @@ class APIService {
         "user_group_id": userGroupId,
         "username": username,
         "password": password,
-        "created_by": createdBy
+        "created_by": createdBy,
+        "salary_per_day": salaryperday
       });
       print(response.data);
       return response.data;

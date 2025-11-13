@@ -100,13 +100,13 @@ class _LeftBarState extends State<LeftBar>
                     route: '/dashboard/analytics',
                   ),
                   MenuWidget(
-                      permission: 'reminder_main',
+                      permission: 'daybook_main',
                       iconData: LucideIcons.book,
                       isCondensed: isCondensed,
                       title: "DayBook",
                       children: [
                         MenuItem(
-                          permission: 'reminder_reminder',
+                          permission: 'daybook_daybook_add',
                           title: 'Add Voucher',
                           route: '/daybook/adddaybook',
                           isCondensed: widget.isCondensed,
@@ -139,13 +139,13 @@ class _LeftBarState extends State<LeftBar>
                         ),
                       ]),
                   MenuWidget(
-                      permission: 'driver_main',
+                      permission: 'subledger_main',
                       iconData: LucideIcons.userCheck2,
                       isCondensed: isCondensed,
                       title: "Subledgers",
                       children: [
                         MenuItem(
-                          permission: 'driver_driver',
+                          permission: 'subledger_customer',
                           title: 'Customers',
                           route: '/subledgers/customers',
                           isCondensed: widget.isCondensed,

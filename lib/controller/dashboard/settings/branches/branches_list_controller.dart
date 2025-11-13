@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:LeLaundrette/controller/my_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:LeLaundrette/backend/apiservice.dart';
-import 'package:LeLaundrette/controller/my_controller.dart';
 
 class BranchesListController extends MyController {
   TextEditingController searchcontroller = TextEditingController();
@@ -28,37 +28,15 @@ class BranchesListController extends MyController {
   Future<void> loadData([bool load = true]) async {
     setLoading(load);
     final response =
-        await APIService.getMasterDetails(searchcontroller.text, 'branches');
+        await APIService.getMasterDetails(searchcontroller.text, 'branch');
     data = response['data'];
     setLoading(false);
   }
-
-  //  fetchStates(String value) async {
-  //   return APIService.fetchStates(value, selectedcountry!.id.toString());
-  // }
-
-  // Future<Map<String, dynamic>> addLcoation() async {
-  //   final response = await APIService.addCountry(countrynamecontroller.text);
-  //   return response;
-  // }
-
-  // Future<Map<String, dynamic>> editLocation() async {
-  //   final response = await APIService.editCountry(
-  //       selectedcountry!.id.toString(), countrynamecontroller.text, isdefault);
-  //   return response;
-  // }
 
   void setLoading(bool value) {
     loading = value;
     update();
   }
-
-  // void setCountry(CountryModel? value) {
-  //   selectedcountry = value;
-  //   isdefault = value?.isdefault ?? false;
-  //   countrynamecontroller.text = selectedcountry?.name ?? '';
-  //   update();
-  // }
 
   String getIdFromName(
     String name,

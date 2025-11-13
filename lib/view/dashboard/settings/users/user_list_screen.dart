@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:LeLaundrette/backend/apiservice.dart';
 import 'package:LeLaundrette/controller/dashboard/settings/users/users_list_controller.dart';
 import 'package:LeLaundrette/helpers/services/storage/local_storage.dart';
@@ -17,13 +14,15 @@ import 'package:LeLaundrette/helpers/widgets/my_flex_item.dart';
 import 'package:LeLaundrette/helpers/widgets/my_spacing.dart';
 import 'package:LeLaundrette/helpers/widgets/my_text.dart';
 import 'package:LeLaundrette/model/branch_model.dart';
-import 'package:LeLaundrette/model/subledger_model.dart';
 import 'package:LeLaundrette/model/usergroupmodel.dart';
 import 'package:LeLaundrette/view/layouts/delete_view.dart';
 import 'package:LeLaundrette/view/layouts/layout.dart';
 import 'package:LeLaundrette/view/ui/input_output_utils.dart';
 import 'package:LeLaundrette/view/ui/permission_handler.dart';
 import 'package:LeLaundrette/view/ui/toast_message_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -44,12 +43,12 @@ class _UsersListScreenState extends State<UsersListScreen>
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _outlineInputBorder = OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
       );
       toastcontroller = ToastMessageController(this);
-      await controller.loadData();
+      controller.loadData();
     });
     super.initState();
   }
@@ -169,16 +168,14 @@ class _UsersListScreenState extends State<UsersListScreen>
               ],
             ),
             MySpacing.height(8),
-            IOUtils.dataTable<SubledgerModel>(
+            IOUtils.dataTable<dynamic>(
               ["Name", "Phone", "User Group"],
               [
-                (value) => value.name.toString(),
-                (value) => value.phone.toString(),
-                (value) => value.userGroupName.toString(),
+                (value) => value['name'].toString(),
+                (value) => value['phone'].toString(),
+                (value) => value['group_name'].toString(),
               ],
-              controller.data
-                  .where((element) => element.userGroupId != '1')
-                  .toList(),
+              controller.data,
               context,
               isaction: true,
               actionwidth: 200,
@@ -194,7 +191,7 @@ class _UsersListScreenState extends State<UsersListScreen>
                 TableAction(
                     permission: 'settings_users_delete',
                     function: (data) async {
-                      DeleteView.deleteDialog(data.id.toString(), 'users',
+                      DeleteView.deleteDialog(data['id'].toString(), 'users',
                           "User", toastMessage, controller.loadData, context);
                     },
                     iconData: IOUtils.deleteIcon,
@@ -261,30 +258,23 @@ class _UsersListScreenState extends State<UsersListScreen>
                                                 RegExp(r'[0-9]')),
                                           ]),
                                       IOUtils.typeAheadField<BranchModel>(
-                                          "Branch",
-                                          "Select Branch",
-                                          (term) => APIService
-                                              .getBranchesBytermByUserid(
-                                                  term,
-                                                  LocalStorage.getLoggedUserdata()[
-                                                          'userid']
-                                                      .toString()),
-                                          controller.setBranch,
-                                          (value) => value!.name.toString(),
-                                          controller.selectedbranch,
-                                          readOnly:
-                                              !LocalStorage.isSuperAdmin()),
+                                        "Branch",
+                                        "Select Branch",
+                                        (term) => APIService
+                                            .getBranchesBytermByUserid(
+                                                term,
+                                                LocalStorage.getLoggedUserdata()[
+                                                        'userid']
+                                                    .toString()),
+                                        controller.setBranch,
+                                        (value) => value!.name.toString(),
+                                        controller.selectedbranch,
+                                      ),
                                       IOUtils.typeAheadField<UserGroupModel>(
                                           "User Group",
                                           "Select User Group",
-                                          (term) async => (await APIService
-                                                  .getUserGroupsList())
-                                              .where((e) =>
-                                                  (e.id.toString() != '1' ||
-                                                      (e.id.toString() == '1' &&
-                                                          LocalStorage
-                                                              .isSuperAdmin())))
-                                              .toList(),
+                                          (term) =>
+                                              APIService.getUserGroupsList(),
                                           controller.setUserGroup,
                                           (value) =>
                                               value!.groupname.toString(),
@@ -424,7 +414,7 @@ class _UsersListScreenState extends State<UsersListScreen>
         pageBuilder: (a, b, c) {
           return GetBuilder(
               init: controller,
-              tag: 'users_controller',
+              tag: 'employee_controller',
               builder: (controller) {
                 return Dialog(
                   clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -470,19 +460,18 @@ class _UsersListScreenState extends State<UsersListScreen>
                                                 RegExp(r'[0-9]')),
                                           ]),
                                       IOUtils.typeAheadField<BranchModel>(
-                                          "Branch",
-                                          "Select Branch",
-                                          (term) => APIService
-                                              .getBranchesBytermByUserid(
-                                                  term,
-                                                  LocalStorage.getLoggedUserdata()[
-                                                          'userid']
-                                                      .toString()),
-                                          controller.setBranch,
-                                          (value) => value!.name.toString(),
-                                          controller.selectedbranch,
-                                          readOnly:
-                                              !LocalStorage.isSuperAdmin()),
+                                        "Branch",
+                                        "Select Branch",
+                                        (term) => APIService
+                                            .getBranchesBytermByUserid(
+                                                term,
+                                                LocalStorage.getLoggedUserdata()[
+                                                        'userid']
+                                                    .toString()),
+                                        controller.setBranch,
+                                        (value) => value!.name.toString(),
+                                        controller.selectedbranch,
+                                      ),
                                       IOUtils.typeAheadField<UserGroupModel>(
                                           "User Group",
                                           "Select User Group",

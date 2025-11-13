@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:LeLaundrette/backend/apiservice.dart';
 import 'package:LeLaundrette/controller/dashboard/daybook/add_daybook_controller.dart';
 import 'package:LeLaundrette/helpers/theme/app_theme.dart';
@@ -37,20 +39,19 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
   void initState() {
     super.initState();
     controller = Get.put(AddDayBookController());
-    controller.setLoading(true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _outlineInputBorder = OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
       );
       toastcontroller = ToastMessageController(this);
-      controller.loadData();
     });
   }
 
   final List<double> columnWidths = [
     60, // Id
-    150, // Vehicle Name
-    150, // Driver Name
+    120, // Vehicle Name
+    120, // Driver Name
+    120, // Customer Name
     1, // Site/Location (flex)
     1, // Hour/Time Work (flex)
     1, // Rate (flex)
@@ -74,7 +75,7 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
     return Layout(
       child: GetBuilder(
           init: controller,
-          tag: 'add_sales_controller',
+          tag: 'add_daybook_controller',
           builder: (controller) {
             return controller.loading
                 ? MyFlex(
@@ -141,9 +142,9 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
               ),
             ]),
             MySpacing.height(3),
-            AddSalesHeader(),
+            AddDayBookHeader(),
             MySpacing.height(3),
-            AddSalesRow(),
+            AddDayBookRow(),
             MySpacing.height(3),
             Expanded(child: buildMainTables()),
             MySpacing.height(3),
@@ -290,52 +291,57 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
         );
       }
 
-Map<String, double> totals = _calculateDayBookTotals(items);
+      Map<String, double> totals = _calculateDayBookTotals(items);
 
-allRows.add(
-  Column(
-    children: [
-      MyContainer(
-        width: double.infinity,
-        height: 40,
-        borderRadiusAll: 3,
-        borderColor: contentTheme.textBorder,
-        color: Colors.amber.shade200,
-        paddingAll: 0,
-        child: Row(
+      allRows.add(
+        Column(
           children: [
-            _totalCell("Total", width: columnWidths[0]),
-            _divider(),
-            _emptyCell(width: columnWidths[1]),
-            _divider(),
-            _totalCell(driverName, width: columnWidths[2]),
-            _divider(),
-            _emptyCell(flex: columnWidths[3].toInt()),
-            _divider(),
-            _totalCell(totals['time_work']!.toStringAsFixed(2), flex: columnWidths[4].toInt()),
-            _divider(),
-            _emptyCell(flex: columnWidths[5].toInt()),
-            _divider(),
-            _totalCell(totals['amount']!.toStringAsFixed(2), flex: columnWidths[6].toInt()),
-            _divider(),
-            _totalCell(totals['shifting_charge']!.toStringAsFixed(2), flex: columnWidths[7].toInt()),
-            _divider(),
-            _totalCell(totals['driver_salary']!.toStringAsFixed(2), flex: columnWidths[8].toInt()),
-            _divider(),
-            _totalCell(totals['driver_bata']!.toStringAsFixed(2), flex: columnWidths[9].toInt()),
-            _divider(),
-            _emptyCell(flex: columnWidths[10].toInt()),
-            _divider(),
-            _emptyCell(flex: columnWidths[11].toInt()),
-            _divider(),
-            SizedBox(width: columnWidths[12]),
+            MyContainer(
+              width: double.infinity,
+              height: 40,
+              borderRadiusAll: 3,
+              borderColor: contentTheme.textBorder,
+              color: Colors.amber.shade200,
+              paddingAll: 0,
+              child: Row(
+                children: [
+                  _totalCell("Total", width: columnWidths[0]),
+                  _divider(),
+                  _emptyCell(width: columnWidths[1]),
+                  _divider(),
+                  _totalCell(driverName, width: columnWidths[2]),
+                  _divider(),
+                  _emptyCell(flex: columnWidths[3].toInt()),
+                  _divider(),
+                  _totalCell(totals['time_work']!.toStringAsFixed(2),
+                      flex: columnWidths[4].toInt()),
+                  _divider(),
+                  _emptyCell(flex: columnWidths[5].toInt()),
+                  _divider(),
+                  _totalCell(totals['amount']!.toStringAsFixed(2),
+                      flex: columnWidths[6].toInt()),
+                  _divider(),
+                  _totalCell(totals['shifting_charge']!.toStringAsFixed(2),
+                      flex: columnWidths[7].toInt()),
+                  _divider(),
+                  _totalCell(totals['driver_salary']!.toStringAsFixed(2),
+                      flex: columnWidths[8].toInt()),
+                  _divider(),
+                  _totalCell(totals['driver_bata']!.toStringAsFixed(2),
+                      flex: columnWidths[9].toInt()),
+                  _divider(),
+                  _emptyCell(flex: columnWidths[10].toInt()),
+                  _divider(),
+                  _emptyCell(flex: columnWidths[11].toInt()),
+                  _divider(),
+                  SizedBox(width: columnWidths[12]),
+                ],
+              ),
+            ),
+            Divider(height: 1, thickness: 0.8, color: contentTheme.textBorder),
           ],
         ),
-      ),
-      Divider(height: 1, thickness: 0.8, color: contentTheme.textBorder),
-    ],
-  ),
-);
+      );
     });
 
     return MyContainer.bordered(
@@ -671,66 +677,7 @@ allRows.add(
                 ),
                 MySpacing.width(16),
                 MyButton(
-                  onPressed: () async {
-                    if (controller.selectedcustomer.isEmpty) {
-                      toastMessage(
-                          "Please select customer", contentTheme.danger);
-                    } else if (controller.currency.isEmpty) {
-                      toastMessage(
-                          "Please select currency", contentTheme.danger);
-                    } else if (controller.data.isEmpty) {
-                      toastMessage("Please add inventory", contentTheme.danger);
-                    } else if (controller.selectedbranch == null) {
-                      toastMessage("Please select branch", contentTheme.danger);
-                    } else if (controller.selectedsalesman == null) {
-                      toastMessage(
-                          "Please select Salesman", contentTheme.danger);
-                    } else if (controller.invoiceType == null) {
-                      toastMessage(
-                          "Please select invoice type", contentTheme.danger);
-                    } else if (controller.selectedpaymenttype == null) {
-                      toastMessage(
-                          "Please select payment type", contentTheme.danger);
-                    } else {
-                      controller.setLoading(true);
-                      // final resp = await APIService.addSale(
-                      //     controller.selectedbranch['id'].toString(),
-                      //     'SI',
-                      //     '',
-                      //     APIService.formatDatefromDate(
-                      //         controller.voucherdate!, true),
-                      //     controller.selectedcustomer['id'].toString(),
-                      //     controller.selectedcustomer['name'].toString(),
-                      //     controller.currency["id"].toString(),
-                      //     controller.currency["currency"].toString(),
-                      //     controller.currency["exchange_rate"].toString(),
-                      //     'E',
-                      //     (num.tryParse(controller.discountcontroller.text) ??
-                      //             0)
-                      //         .toString(),
-                      //     controller.advancecontroller.text.isNotEmpty
-                      //         ? "Y"
-                      //         : "N",
-                      //     controller.advancecontroller.text.isEmpty
-                      //         ? "0"
-                      //         : controller.advancecontroller.text,
-                      //     '',
-                      //     controller.data,
-                      //     controller.remarkscontroller.text,
-                      //     controller.invoiceType!.id.toString(),
-                      //     controller.selectedpaymenttype!.id.toString(),
-                      //     controller.selectedsalesman['id'].toString());
-                      // controller.setLoading(false);
-                      // if (resp['status'] == 'success') {
-                      //   Get.offNamed('/sales/listsales');
-                      //   toastMessage("Sales Invoice Created Successfully",
-                      //       contentTheme.success);
-                      // } else {
-                      //   toastMessage(
-                      //       resp['message'].toString(), contentTheme.danger);
-                      // }
-                    }
-                  },
+                  onPressed: () async {},
                   elevation: 0,
                   borderRadiusAll: 8,
                   padding: MySpacing.xy(20, 4),
@@ -749,7 +696,7 @@ allRows.add(
     );
   }
 
- Widget AddSalesHeader() {
+  Widget AddDayBookHeader() {
     return MyContainer.bordered(
       width: double.infinity,
       borderRadiusAll: 3,
@@ -764,25 +711,27 @@ allRows.add(
           _divider(),
           _headerCell("Driver", width: columnWidths[2]),
           _divider(),
-          _headerCell("Site", flex: columnWidths[3].toInt()),
+          _headerCell("Customer", width: columnWidths[3]),
           _divider(),
-          _headerCell("Hour", flex: columnWidths[4].toInt()),
+          _headerCell("Site", flex: columnWidths[4].toInt()),
           _divider(),
-          _headerCell("Rate", flex: columnWidths[5].toInt()),
+          _headerCell("Hour", flex: columnWidths[5].toInt()),
           _divider(),
-          _headerCell("Amount", flex: columnWidths[6].toInt()),
+          _headerCell("Rate", flex: columnWidths[6].toInt()),
           _divider(),
-          _headerCell("Shift Charge", flex: columnWidths[7].toInt()),
+          _headerCell("Amount", flex: columnWidths[7].toInt()),
           _divider(),
-          _headerCell("Driver Salary", flex: columnWidths[8].toInt()),
+          _headerCell("Shf Charge", flex: columnWidths[8].toInt()),
           _divider(),
-          _headerCell("Bata", flex: columnWidths[9].toInt()),
+          _headerCell("Dvr Salary", flex: columnWidths[9].toInt()),
           _divider(),
-          _headerCell("Payment Type", flex: columnWidths[10].toInt()),
+          _headerCell("Bata", flex: columnWidths[10].toInt()),
           _divider(),
-          _headerCell("Status", flex: columnWidths[11].toInt()),
+          _headerCell("Pay Type", flex: columnWidths[11].toInt()),
           _divider(),
-          _headerCell("", width: columnWidths[12]),
+          _headerCell("Status", flex: columnWidths[12].toInt()),
+          _divider(),
+          _headerCell("", width: columnWidths[13]),
         ],
       ),
     );
@@ -809,7 +758,7 @@ allRows.add(
         color: contentTheme.textBorder,
       );
 
-  Widget AddSalesRow() {
+  Widget AddDayBookRow() {
     return MyContainer.bordered(
       width: double.infinity,
       borderRadiusAll: 3,
@@ -820,21 +769,15 @@ allRows.add(
         children: [
           _dataCell("#", width: columnWidths[0]),
           _divider(),
-          // Vehicle TypeAhead with sample data
           _dataField(
-              IOUtils.typeAheadField<String>(
+              IOUtils.typeAheadField<dynamic>(
                 "",
                 "",
-                (term) async => [
-                  'Vehicle A',
-                  'Vehicle B',
-                  'Vehicle C',
-                  'Vehicle D'
-                ]
-                    .where((e) => e.toLowerCase().contains(term.toLowerCase()))
-                    .toList(),
+                (term) async {
+                  return await APIService.getVehicleListByModelAPI(term);
+                },
                 (value) => controller.updateVehicle(value),
-                (value) => value ?? '',
+                (value) => "${value["name"]}",
                 controller.selectedVehicle,
                 emptyFuntion: (val) => val == null || val.isEmpty || val == '',
                 onlybox: true,
@@ -842,16 +785,15 @@ allRows.add(
               ),
               width: columnWidths[1]),
           _divider(),
-          // Driver TypeAhead with sample data
           _dataField(
-              IOUtils.typeAheadField<String>(
+              IOUtils.typeAheadField<dynamic>(
                 "",
                 "",
-                (term) async => ['Driver A', 'Driver B', 'Driver C', 'Driver D']
-                    .where((e) => e.toLowerCase().contains(term.toLowerCase()))
-                    .toList(),
+                (term) async {
+                  return await APIService.getSubledgerListByModelAPI(term, "1");
+                },
                 (value) => controller.updateDriver(value),
-                (value) => value ?? '',
+                (value) => "${value["name"]}",
                 controller.selectedDriver,
                 emptyFuntion: (val) => val == null || val.isEmpty || val == '',
                 onlybox: true,
@@ -860,79 +802,90 @@ allRows.add(
               width: columnWidths[2]),
           _divider(),
           _dataField(
-              IOUtils.fields("", "", controller.locationController,
-                  onlybox: true, borderless: true),
-              flex: columnWidths[3].toInt()),
+              IOUtils.typeAheadField<dynamic>(
+                "",
+                "",
+                (term) async {
+                  return await APIService.getSubledgerListByModelAPI(term, "3");
+                },
+                (value) => controller.updateCustomer(value),
+                (value) => "${value["name"]}",
+                controller.selectedCustomer,
+                emptyFuntion: (val) => val == null || val.isEmpty || val == '',
+                onlybox: true,
+                borderless: true,
+              ),
+              width: columnWidths[3]),
           _divider(),
           _dataField(
-              IOUtils.fields("", "", controller.timeWorkController,
+              IOUtils.fields("", "", controller.locationController,
                   onlybox: true, borderless: true),
               flex: columnWidths[4].toInt()),
           _divider(),
           _dataField(
-              IOUtils.fields("", "", controller.rateController,
-                  onlybox: true, borderless: true),
+              IOUtils.fields("", "", controller.timeWorkController,
+                  onChanged: (val) {
+                controller.updateRate(controller.timeWorkController.text);
+              }, onlybox: true, borderless: true),
               flex: columnWidths[5].toInt()),
           _divider(),
           _dataField(
-              IOUtils.fields("", "", controller.amountController,
-                  onlybox: true, borderless: true),
+              IOUtils.fields("", "", controller.rateController,
+                  onlybox: true, borderless: true, readOnly: true),
               flex: columnWidths[6].toInt()),
           _divider(),
           _dataField(
-              IOUtils.fields("", "", controller.shiftingChargeController,
-                  onlybox: true, borderless: true),
+              IOUtils.fields("", "", controller.amountController,
+                  onlybox: true, borderless: true, readOnly: true),
               flex: columnWidths[7].toInt()),
           _divider(),
           _dataField(
-              IOUtils.fields("", "", controller.driverSalaryController,
-                  onlybox: true, borderless: true),
+              IOUtils.fields("", "", controller.shiftingChargeController,
+                  onlybox: true, borderless: true, readOnly: true),
               flex: columnWidths[8].toInt()),
+          _divider(),
+          _dataField(
+              IOUtils.fields("", "", controller.driverSalaryController,
+                  onlybox: true, borderless: true, readOnly: true),
+              flex: columnWidths[9].toInt()),
           _divider(),
           _dataField(
               IOUtils.fields("", "", controller.driverBataController,
                   onlybox: true, borderless: true),
-              flex: columnWidths[9].toInt()),
+              flex: columnWidths[10].toInt()),
           _divider(),
           _dataField(
-              IOUtils.typeAheadField<String>(
-                  "",
-                  "",
-                  (term) async => ['Cash', 'Credit']
-                      .where(
-                          (e) => e.toLowerCase().contains(term.toLowerCase()))
-                      .toList(),
-                  (value) => controller.updatePaymentType(value),
-                  (value) => value ?? '',
-                  controller.selectedPayment,
+              IOUtils.typeAheadField<dynamic>("", "", (term) async {
+                return APIService.getPaymentTypes();
+              }, (value) => controller.updatePaymentType(value),
+                  (value) => "${value["name"]}", controller.selectedPayment,
                   emptyFuntion: (val) =>
                       val == null || val.isEmpty || val == '',
                   onlybox: true,
                   borderless: true),
-              flex: columnWidths[10].toInt()),
+              flex: columnWidths[11].toInt()),
           _divider(),
           _dataField(
-              IOUtils.typeAheadField<String>(
+              IOUtils.typeAheadField<dynamic>(
                 "",
                 "",
-                (value) async => ['Completed', 'Pending']
-                    .where((e) => e.toLowerCase().contains(value.toLowerCase()))
-                    .toList(),
+                (value) async {
+                  return controller.statuslist;
+                },
                 controller.updateStatus,
-                (value) => value ?? '',
+                (value) => "${value["name"]}",
                 controller.selectedStatus,
                 onlybox: true,
                 borderless: true,
                 emptyFuntion: (val) => val == null || val.isEmpty || val == '',
               ),
-              flex: columnWidths[11].toInt()),
+              flex: columnWidths[12].toInt()),
           _divider(),
           _addButtonCell(),
         ],
       ),
     );
   }
-
 
   Widget _dataCell(String text, {double? width, int? flex}) => width != null
       ? SizedBox(
@@ -950,44 +903,70 @@ allRows.add(
   Widget _addButtonCell() {
     return GestureDetector(
       onTap: () async {
-        if (controller.selectedDriver.isEmpty) {
-          toastMessage("Please select a driver", contentTheme.danger);
-          return;
-        }
-        if (controller.selectedVehicle.isEmpty) {
+        if (controller.selectedVehicle == null) {
           toastMessage("Please select a vehicle", contentTheme.danger);
           return;
         }
+        if (controller.selectedDriver == null) {
+          toastMessage("Please select a driver", contentTheme.danger);
+          return;
+        }
 
-        // Check if exists
-        String driverName = controller.selectedDriver;
-        var existingDriver = controller.data.where(
-          (row) => row['driver_name'] == driverName,
+        if (controller.selectedCustomer == null) {
+          toastMessage("Please select a customer", contentTheme.danger);
+          return;
+        }
+
+        if (controller.timeWorkController.text.isEmpty) {
+          toastMessage("Please enter hour", contentTheme.danger);
+          return;
+        }
+
+        if (controller.selectedPayment == null) {
+          toastMessage("Please select payment", contentTheme.danger);
+          return;
+        }
+
+        if (controller.selectedStatus == null) {
+          toastMessage("Please select status", contentTheme.danger);
+          return;
+        }
+
+        dynamic vehicleDetails = controller.selectedVehicle;
+        dynamic existingVehicle = controller.data.where(
+          (row) =>
+              row['vehicle_id'].toString() == vehicleDetails["id"].toString(),
         );
 
-        String driverId;
-        if (existingDriver.isEmpty) {
-          driverId = controller.nextId.toString();
-          controller.nextId++;
-        } else {
-          driverId = existingDriver.first['id'];
-        }
+        // String driverId;
+        // if (existingDriver.isEmpty) {
+        //   driverId = controller.nextId.toString();
+        //   controller.nextId++;
+        // } else {
+        //   driverId = existingDriver.first['id'];
+        // }
 
         // Add row
         controller.data.add({
-          'id': driverId,
-          'driver_name': driverName,
-          'vehicle_name': controller.selectedVehicle,
-          'location': controller.locationController.text,
-          'time_work': controller.timeWorkController.text,
-          'rate': controller.rateController.text,
-          'amount': controller.amountController.text,
-          'shifting_charge': controller.shiftingChargeController.text,
-          'driver_salary': controller.driverSalaryController.text,
-          'driver_bata': controller.driverBataController.text,
-          'payment_type': controller.selectedPayment,
-          'status': controller.selectedStatus,
-          'customer_name': driverName,
+          "id": "index of the item just to show in ui table",
+          "subledger_id": controller.selectedCustomer["id"].toString(),
+          "subledger_name": controller.selectedCustomer["name"].toString(),
+          "vehicle_id": controller.selectedVehicle["id"].toString(),
+          "vehicle_name": controller.selectedVehicle["name"].toString(),
+          "driver_id": controller.selectedDriver["id"].toString(),
+          "driver_name": controller.selectedDriver["name"].toString(),
+          "location_name": controller.locationController.text,
+          "hour": controller.timeWorkController.text,
+          "rate": controller.rateController.text,
+          "amount": controller.amountController.text,
+          "need_shift": controller.selectedVehicle["need_shift"].toString(),
+          "shifting_charge": controller.shiftingChargeController.text,
+          "driver_salary": controller.driverSalaryController.text,
+          "driver_bata": controller.driverBataController.text,
+          "payment_type_id": controller.selectedPayment["id"].toString(),
+          "payment_type_name": controller.selectedPayment["name"].toString(),
+          "status": controller.selectedStatus["id"].toString(),
+          "status_name": controller.selectedStatus["name"].toString()
         });
         print("-------------------------");
         print(controller.data);
@@ -1007,229 +986,14 @@ allRows.add(
 
         controller.reassignIDs();
       },
-      child: SizedBox(
+      child: const SizedBox(
         width: 60,
         height: 35,
-        child: const Center(
+        child: Center(
           child: Icon(LucideIcons.plusCircle, size: 20),
         ),
       ),
     );
-  }
-
-  void addCustomer() {
-    showGeneralDialog(
-        barrierColor: Colors.transparent,
-        context: context,
-        pageBuilder: (a, b, c) {
-          return GetBuilder(
-              init: controller,
-              builder: (controller) {
-                return Dialog(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  shape: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none),
-                  child: controller.loading
-                      ? SizedBox(
-                          width: 400,
-                          height: 300,
-                          child: LoadingAnimationWidget.dotsTriangle(
-                              color: contentTheme.primary, size: 40),
-                        )
-                      : SizedBox(
-                          width: 600,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-                                child: MyText.labelLarge(
-                                  'Add Customer',
-                                  fontWeight: 600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Padding(
-                                  padding: MySpacing.xy(0, 0),
-                                  child: MyContainer(
-                                    child: Column(
-                                      children: [
-                                        Wrap(
-                                            children: [
-                                          IOUtils.fields(
-                                            "Name",
-                                            "Enter Name",
-                                            controller.namecontroller,
-                                          ),
-                                          IOUtils.fields(
-                                            "Phone",
-                                            "Enter Phone",
-                                            controller.phonecontroller,
-                                          ),
-                                          IOUtils.fields(
-                                            "Secondary Phone",
-                                            "Enter Secondary Phone",
-                                            controller.secondaryphonecontroller,
-                                          ),
-                                          IOUtils.typeAheadField<dynamic>(
-                                            "Branch",
-                                            "Select Branch",
-                                            (term) => APIService
-                                                .getMasterDetailsAsList(
-                                                    term, 'branches'),
-                                            controller.setBranch,
-                                            (value) =>
-                                                value!['name'].toString(),
-                                            controller.selectedbranch,
-                                          ),
-                                          IOUtils.fields(
-                                            "Address",
-                                            "Enter Address",
-                                            controller.addresscontroller,
-                                          ),
-                                          IOUtils.fields(
-                                            "Latitude",
-                                            "Enter Latitude",
-                                            controller.latitudecontroller,
-                                          ),
-                                          IOUtils.fields(
-                                            "Longitude",
-                                            "Enter Longitude",
-                                            controller.longitudecontroller,
-                                          ),
-                                        ]
-                                                .map((e) => Padding(
-                                                    padding: MySpacing.all(5),
-                                                    child: e))
-                                                .toList()),
-                                      ],
-                                    ),
-                                  )),
-                              Padding(
-                                padding: MySpacing.only(right: 20, bottom: 20),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        MyButton(
-                                          onPressed: () => Get.back(),
-                                          elevation: 0,
-                                          borderRadiusAll: 8,
-                                          padding: MySpacing.xy(20, 16),
-                                          backgroundColor:
-                                              colorScheme.secondaryContainer,
-                                          child: MyText.labelMedium(
-                                            "Close",
-                                            fontWeight: 600,
-                                            color: colorScheme
-                                                .onSecondaryContainer,
-                                          ),
-                                        ),
-                                        MySpacing.width(16),
-                                        MyButton(
-                                          onPressed: () async {
-                                            if (controller
-                                                .namecontroller.text.isEmpty) {
-                                              toastMessage(
-                                                  "Name Field is Required",
-                                                  contentTheme.danger);
-                                              return;
-                                            }
-                                            if (controller
-                                                .phonecontroller.text.isEmpty) {
-                                              toastMessage(
-                                                  "Phone Field is Required",
-                                                  contentTheme.danger);
-                                              return;
-                                            }
-                                            if (controller.selectedbranch ==
-                                                null) {
-                                              toastMessage(
-                                                  "Branch Field is Required",
-                                                  contentTheme.danger);
-                                              return;
-                                            }
-                                            if (controller.addresscontroller
-                                                .text.isEmpty) {
-                                              toastMessage(
-                                                  "Address Field is Required",
-                                                  contentTheme.danger);
-                                              return;
-                                            }
-                                            controller.setLoading(true);
-                                            // final resp =
-                                            //     await APIService.addSubledger(
-                                            //         controller
-                                            //             .namecontroller.text,
-                                            //         controller
-                                            //             .phonecontroller.text,
-                                            //         controller
-                                            //             .selectedbranch['id']
-                                            //             .toString(),
-                                            //         controller
-                                            //             .secondaryphonecontroller
-                                            //             .text,
-                                            //         controller
-                                            //             .addresscontroller.text,
-                                            //         controller
-                                            //             .latitudecontroller.text
-                                            //             .toString(),
-                                            //         controller
-                                            //             .longitudecontroller
-                                            //             .text
-                                            //             .toString(),
-                                            //         '1',
-                                            //         LocalStorage.getLoggedUserdata()[
-                                            //                 'userid']
-                                            //             .toString());
-                                            // controller.setLoading(false);
-                                            // if (resp['status'] == 'success') {
-                                            //   toastMessage(
-                                            //       resp['message'].toString(),
-                                            //       contentTheme.success);
-                                            //   Get.back(
-                                            //       result: resp['subledgerId']
-                                            //           .toString());
-                                            // } else {
-                                            //   toastMessage(
-                                            //       resp['message'].toString(),
-                                            //       contentTheme.danger);
-                                            // }
-                                          },
-                                          elevation: 0,
-                                          borderRadiusAll: 8,
-                                          padding: MySpacing.xy(20, 16),
-                                          backgroundColor: colorScheme.primary,
-                                          child: MyText.labelMedium(
-                                            "Save",
-                                            fontWeight: 600,
-                                            color: colorScheme.onPrimary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                );
-              });
-        }).then((value) {
-      if (value is String &&
-          value != '' &&
-          num.tryParse(value.toString()) is num) {
-        controller.setCusotmer({
-          'id': value.toString(),
-          'name': controller.namecontroller.text.toString()
-        });
-      }
-    });
   }
 
   void toastMessage(String text, Color color) {

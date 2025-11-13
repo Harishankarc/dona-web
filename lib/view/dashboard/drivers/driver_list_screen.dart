@@ -1,6 +1,3 @@
-import 'dart:typed_data';
-
-import 'package:LeLaundrette/view/layouts/image_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:LeLaundrette/backend/apiservice.dart';
@@ -24,8 +21,6 @@ import 'package:LeLaundrette/view/ui/input_output_utils.dart';
 import 'package:LeLaundrette/view/ui/toast_message_controller.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:path/path.dart' as p;
-import 'package:http/http.dart' as http;
 
 class DriversListScreen extends StatefulWidget {
   const DriversListScreen({
@@ -167,6 +162,7 @@ class _DriversListScreenState extends State<DriversListScreen>
                 "Name",
                 "Phone",
                 "Secondary Phone",
+                "Salary / Day",
                 "Address",
               ],
               [
@@ -175,6 +171,9 @@ class _DriversListScreenState extends State<DriversListScreen>
                 (value) => value['secondary_phone'].toString().isEmpty
                     ? "-"
                     : value['secondary_phone'].toString(),
+                (value) => value['salary_per_day'].toString().isEmpty
+                    ? "-"
+                    : value['salary_per_day'].toString(),
                 (value) => value['address'].toString()
               ],
               controller.data,
@@ -269,6 +268,11 @@ class _DriversListScreenState extends State<DriversListScreen>
                                             controller.secondaryphonecontroller,
                                           ),
                                           IOUtils.fields(
+                                            "Salary Per Day",
+                                            "Enter salary per day",
+                                            controller.salaryperdaycontroller,
+                                          ),
+                                          IOUtils.fields(
                                             "Address",
                                             "Enter Address",
                                             controller.addresscontroller,
@@ -320,6 +324,15 @@ class _DriversListScreenState extends State<DriversListScreen>
                                                   contentTheme.danger);
                                               return;
                                             }
+                                            if (controller
+                                                .salaryperdaycontroller
+                                                .text
+                                                .isEmpty) {
+                                              toastMessage(
+                                                  "Salary Per Day Field is Required",
+                                                  contentTheme.danger);
+                                              return;
+                                            }
 
                                             if (controller.addresscontroller
                                                 .text.isEmpty) {
@@ -349,7 +362,10 @@ class _DriversListScreenState extends State<DriversListScreen>
                                                     '0',
                                                     LocalStorage.getLoggedUserdata()[
                                                             'userid']
-                                                        .toString());
+                                                        .toString(),
+                                                    controller
+                                                        .salaryperdaycontroller
+                                                        .text);
                                             controller.setLoading(false);
                                             if (response['status'] ==
                                                 'success') {
@@ -446,6 +462,11 @@ class _DriversListScreenState extends State<DriversListScreen>
                                             controller.secondaryphonecontroller,
                                           ),
                                           IOUtils.fields(
+                                            "Salary Per Day",
+                                            "Enter salary per day",
+                                            controller.salaryperdaycontroller,
+                                          ),
+                                          IOUtils.fields(
                                             "Address",
                                             "Enter Address",
                                             controller.addresscontroller,
@@ -503,6 +524,15 @@ class _DriversListScreenState extends State<DriversListScreen>
                                                   "Branch field required",
                                                   contentTheme.danger);
                                             }
+                                            if (controller
+                                                .salaryperdaycontroller
+                                                .text
+                                                .isEmpty) {
+                                              toastMessage(
+                                                  "Salary Per Day Field is Required",
+                                                  contentTheme.danger);
+                                              return;
+                                            }
                                             if (controller.addresscontroller
                                                 .text.isEmpty) {
                                               toastMessage(
@@ -532,7 +562,10 @@ class _DriversListScreenState extends State<DriversListScreen>
                                                     '0',
                                                     LocalStorage.getLoggedUserdata()[
                                                             'userid']
-                                                        .toString());
+                                                        .toString(),
+                                                    controller
+                                                        .salaryperdaycontroller
+                                                        .text);
                                             controller.setLoading(false);
                                             if (response['status'] ==
                                                 'success') {

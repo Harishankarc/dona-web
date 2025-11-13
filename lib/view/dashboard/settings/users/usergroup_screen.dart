@@ -205,14 +205,18 @@ class _UserGroupScreenState extends State<UserGroupScreen>
                             children: [
                               Padding(
                                 padding: MySpacing.all(16),
-                                child: MyText.labelLarge(
+                                child: const MyText.labelLarge(
                                   'User Permissions',
                                   fontWeight: 600,
                                   fontSize: 16,
                                 ),
                               ),
-                              SizedBox(
-                                height: 700,
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height * 0.7,
+                                  minHeight: 200,
+                                ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: SingleChildScrollView(
@@ -345,43 +349,45 @@ class _UserGroupScreenState extends State<UserGroupScreen>
                                                           ),
                                                           Expanded(
                                                             flex: 3,
-                                                            child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  ...controller
-                                                                      .selectedgroup!
-                                                                      .permissions!
-                                                                      .keys
-                                                                      .where(
-                                                                        (j) =>
-                                                                            j.contains('${e}_${i}_') &&
-                                                                            j.split('_').length ==
-                                                                                3,
-                                                                      )
-                                                                      .map((j) =>
-                                                                          SizedBox(
-                                                                            width:
-                                                                                100,
-                                                                            child:
-                                                                                Column(
-                                                                              children: [
-                                                                                AutoSizeText(
-                                                                                  j.split('_').last.capitalize.toString(),
-                                                                                  style: MyTextStyle.bodyMedium(),
-                                                                                ),
-                                                                                Checkbox(
-                                                                                  side: IOUtils.outlineInputBorder.borderSide,
-                                                                                  fillColor: controller.selectedgroup!.permissions![j] ?? false ? WidgetStatePropertyAll(contentTheme.success) : WidgetStatePropertyAll(contentTheme.onSuccess),
-                                                                                  checkColor: contentTheme.onSuccess,
-                                                                                  value: controller.selectedgroup!.permissions![j],
-                                                                                  onChanged: (value) => (controller.selectedgroup!.permissions!['${e}_$i'] ?? false) ? controller.setValue(j, value!) : null,
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ))
-                                                                ]),
+                                                            child:
+                                                                SingleChildScrollView(
+                                                              scrollDirection:
+                                                                  Axis.horizontal,
+                                                              child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    ...controller
+                                                                        .selectedgroup!
+                                                                        .permissions!
+                                                                        .keys
+                                                                        .where(
+                                                                          (j) =>
+                                                                              j.contains('${e}_${i}_') &&
+                                                                              j.split('_').length == 3,
+                                                                        )
+                                                                        .map((j) =>
+                                                                            SizedBox(
+                                                                              width: 100,
+                                                                              child: Column(
+                                                                                children: [
+                                                                                  AutoSizeText(
+                                                                                    j.split('_').last.capitalize.toString(),
+                                                                                    style: MyTextStyle.bodyMedium(),
+                                                                                  ),
+                                                                                  Checkbox(
+                                                                                    side: IOUtils.outlineInputBorder.borderSide,
+                                                                                    fillColor: controller.selectedgroup!.permissions![j] ?? false ? WidgetStatePropertyAll(contentTheme.success) : WidgetStatePropertyAll(contentTheme.onSuccess),
+                                                                                    checkColor: contentTheme.onSuccess,
+                                                                                    value: controller.selectedgroup!.permissions![j],
+                                                                                    onChanged: (value) => (controller.selectedgroup!.permissions!['${e}_$i'] ?? false) ? controller.setValue(j, value!) : null,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ))
+                                                                  ]),
+                                                            ),
                                                           )
                                                         ],
                                                       ),
@@ -396,6 +402,42 @@ class _UserGroupScreenState extends State<UserGroupScreen>
                                   ),
                                 ),
                               ),
+                              // SizedBox(
+                              //   height: 600,
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.all(8.0),
+                              //     child: SingleChildScrollView(
+                              //       child: GridView.builder(
+                              //         shrinkWrap: true,
+                              //         gridDelegate:
+                              //             const SliverGridDelegateWithFixedCrossAxisCount(
+                              //                 childAspectRatio: 270 / 70,
+                              //                 crossAxisCount: 4),
+                              //         itemCount: controller.selectedgroup
+                              //                 ?.permissions.length ??
+                              //             0,
+                              //         itemBuilder: (context, index) {
+                              //           final udata = controller.selectedgroup!;
+                              //           final permissionlist = controller
+                              //               .selectedgroup!.permissions.keys
+                              //               .toList();
+                              //           return IOUtils.checkBoxfield(
+                              //             permissionlist[index]
+                              //                 .replaceAll('_', ' ')
+                              //                 .capitalize
+                              //                 .toString(),
+                              //             udata.permissions[
+                              //                 permissionlist[index]],
+                              //             (value) {
+                              //               controller.setValue(
+                              //                   permissionlist[index], value!);
+                              //             },
+                              //           );
+                              //         },
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                               Padding(
                                 padding: MySpacing.all(20),
                                 child: Row(

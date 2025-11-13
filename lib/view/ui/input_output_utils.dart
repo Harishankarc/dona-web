@@ -944,6 +944,7 @@ class IOUtils {
                           children: [
                             Text(
                               buildertext(currentvalue),
+                              overflow: TextOverflow.ellipsis,
                               style: MyTextStyle.bodyMedium(
                                 fontWeight: 600,
                               ),

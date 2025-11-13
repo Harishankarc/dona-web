@@ -12,6 +12,7 @@ class DriversListController extends MyController {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController phonecontroller = TextEditingController();
   TextEditingController secondaryphonecontroller = TextEditingController();
+  TextEditingController salaryperdaycontroller = TextEditingController();
   TextEditingController addresscontroller = TextEditingController();
 
   String subledgertype = "1";

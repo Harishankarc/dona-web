@@ -55,7 +55,7 @@ getPageRoute() {
     GetPage(
       name: '/subledgers/customers',
       page: () => const CustomerListScreen(),
-      middlewares: [PermissionMiddleware(permission: 'driver_driver')],
+      middlewares: [PermissionMiddleware(permission: 'subledger_customer')],
     ),
     GetPage(
       name: '/drivers/listdrivers',
@@ -65,7 +65,7 @@ getPageRoute() {
     GetPage(
       name: '/daybook/adddaybook',
       page: () => const AddDayBookScreen(),
-      middlewares: [PermissionMiddleware(permission: 'reminder_reminder')],
+      middlewares: [PermissionMiddleware(permission: 'daybook_daybook_add')],
     ),
     GetPage(
       name: '/settings/usergroup',

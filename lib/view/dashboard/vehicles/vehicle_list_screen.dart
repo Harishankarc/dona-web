@@ -189,12 +189,12 @@ class _VehiclesListScreenState extends State<VehiclesListScreen>
                       permission: 'vehicle_vehicle_edit',
                       function: (data) async {
                         controller.setData(data);
-                        // editVehicleDetails(data);
+                        editVehicle(data["id"].toString());
                       },
                       iconData: IOUtils.editIcon,
                       color: contentTheme.warning),
                   TableAction(
-                      permission: 'driver_driver_delete',
+                      permission: 'vehicle_vehicle_delete',
                       function: (data) async {
                         DeleteView.deleteDialog(
                             data["id"].toString(),
@@ -399,6 +399,207 @@ class _VehiclesListScreenState extends State<VehiclesListScreen>
                                           backgroundColor: colorScheme.primary,
                                           child: MyText.labelMedium(
                                             "Submit",
+                                            fontWeight: 600,
+                                            color: colorScheme.onPrimary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                );
+              });
+        });
+  }
+
+  void editVehicle(String id) {
+    showGeneralDialog(
+        barrierColor: Colors.transparent,
+        context: context,
+        pageBuilder: (a, b, c) {
+          return GetBuilder(
+              init: controller,
+              builder: (controller) {
+                return Dialog(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  shape: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none),
+                  child: controller.loading
+                      ? SizedBox(
+                          width: 400,
+                          height: 300,
+                          child: LoadingAnimationWidget.dotsTriangle(
+                              color: contentTheme.primary, size: 40),
+                        )
+                      : SizedBox(
+                          width: 600,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                                child: MyText.labelLarge(
+                                  'Edit Vehicle',
+                                  fontWeight: 600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Padding(
+                                  padding: MySpacing.xy(0, 0),
+                                  child: MyContainer(
+                                    child: Column(
+                                      children: [
+                                        Wrap(
+                                            children: [
+                                          IOUtils.fields(
+                                            "Name",
+                                            "Enter name",
+                                            controller.namecontroller,
+                                          ),
+                                          IOUtils.fields(
+                                            "Plate No",
+                                            "Enter plate no",
+                                            controller.registrationcontroller,
+                                          ),
+                                          IOUtils.fields(
+                                            "Charge / Hour",
+                                            "Enter charge / hour",
+                                            controller.chargeperhourcontroller,
+                                          ),
+                                          IOUtils.fields(
+                                            "Minimum Charge",
+                                            "Enter minimum charge",
+                                            controller.minimumchargecontroller,
+                                          ),
+                                          IOUtils.checkBoxfield(
+                                            "Need Shifting",
+                                            "Need Shifting",
+                                            controller.needshifting,
+                                            (value) {
+                                              controller
+                                                  .setShifting(value ?? false);
+                                            },
+                                          ),
+                                          controller.needshifting
+                                              ? IOUtils.fields(
+                                                  "Shifting Charge",
+                                                  "Enter shifting charge",
+                                                  controller
+                                                      .shiftingchargecontroller,
+                                                )
+                                              : SizedBox(),
+                                        ]
+                                                .map((e) => Padding(
+                                                    padding: MySpacing.all(5),
+                                                    child: e))
+                                                .toList()),
+                                      ],
+                                    ),
+                                  )),
+                              Padding(
+                                padding: MySpacing.only(right: 20, bottom: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        MyButton(
+                                          onPressed: () => Get.back(),
+                                          elevation: 0,
+                                          borderRadiusAll: 8,
+                                          padding: MySpacing.xy(20, 16),
+                                          backgroundColor:
+                                              colorScheme.secondaryContainer,
+                                          child: MyText.labelMedium(
+                                            "Close",
+                                            fontWeight: 600,
+                                            color: colorScheme
+                                                .onSecondaryContainer,
+                                          ),
+                                        ),
+                                        MySpacing.width(16),
+                                        MyButton(
+                                          onPressed: () async {
+                                            if (controller
+                                                .namecontroller.text.isEmpty) {
+                                              toastMessage(
+                                                  "Name field is required",
+                                                  contentTheme.danger);
+                                              return;
+                                            }
+                                            if (controller
+                                                .chargeperhourcontroller
+                                                .text
+                                                .isEmpty) {
+                                              toastMessage(
+                                                  "Charge per hour is required",
+                                                  contentTheme.danger);
+                                              return;
+                                            }
+
+                                            if (controller
+                                                .minimumchargecontroller
+                                                .text
+                                                .isEmpty) {
+                                              toastMessage(
+                                                  "Minimum charge is required",
+                                                  contentTheme.danger);
+                                              return;
+                                            }
+                                            controller.setLoading(true);
+                                            final response =
+                                                await APIService.editVehicleAPI(
+                                                    id,
+                                                    controller
+                                                        .namecontroller.text,
+                                                    controller
+                                                        .registrationcontroller
+                                                        .text,
+                                                    controller
+                                                        .chargeperhourcontroller
+                                                        .text,
+                                                    controller
+                                                        .minimumchargecontroller
+                                                        .text,
+                                                    controller.needshifting
+                                                        ? "Y"
+                                                        : "N",
+                                                    controller
+                                                        .shiftingchargecontroller
+                                                        .text,
+                                                    '0',
+                                                    LocalStorage.getLoggedUserdata()[
+                                                            'userid']
+                                                        .toString());
+                                            controller.setLoading(false);
+                                            if (response['status'] ==
+                                                'success') {
+                                              toastMessage(
+                                                  response['message']
+                                                      .toString(),
+                                                  contentTheme.success);
+                                              Get.back();
+                                              controller.loadData();
+                                            } else {
+                                              toastMessage(
+                                                  response['message']
+                                                      .toString(),
+                                                  contentTheme.danger);
+                                            }
+                                          },
+                                          elevation: 0,
+                                          borderRadiusAll: 8,
+                                          padding: MySpacing.xy(20, 16),
+                                          backgroundColor: colorScheme.primary,
+                                          child: MyText.labelMedium(
+                                            "Update",
                                             fontWeight: 600,
                                             color: colorScheme.onPrimary,
                                           ),

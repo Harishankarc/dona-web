@@ -179,7 +179,7 @@ class _CustomerListScreenState extends State<CustomerListScreen>
               actionwidth: 200,
               actionList: [
                 TableAction(
-                    permission: 'driver_driver_edit',
+                    permission: 'subledger_customer_edit',
                     function: (data) {
                       controller.setData(data);
                       editCustomer(data["id"].toString());
@@ -187,7 +187,7 @@ class _CustomerListScreenState extends State<CustomerListScreen>
                     iconData: IOUtils.editIcon,
                     color: contentTheme.warning),
                 TableAction(
-                    permission: 'driver_driver_delete',
+                    permission: 'subledger_customer_delete',
                     function: (data) async {
                       DeleteView.deleteDialog(
                           data["id"].toString(),
@@ -345,7 +345,8 @@ class _CustomerListScreenState extends State<CustomerListScreen>
                                                     '0',
                                                     LocalStorage.getLoggedUserdata()[
                                                             'userid']
-                                                        .toString());
+                                                        .toString(),
+                                                    "0");
                                             controller.setLoading(false);
                                             if (response['status'] ==
                                                 'success') {
@@ -528,7 +529,8 @@ class _CustomerListScreenState extends State<CustomerListScreen>
                                                     '0',
                                                     LocalStorage.getLoggedUserdata()[
                                                             'userid']
-                                                        .toString());
+                                                        .toString(),
+                                                    '0');
                                             controller.setLoading(false);
                                             if (response['status'] ==
                                                 'success') {
