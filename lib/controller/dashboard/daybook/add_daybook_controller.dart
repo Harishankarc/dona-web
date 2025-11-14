@@ -84,26 +84,7 @@ class AddDayBookController extends MyController {
     update();
   }
 
-  void reassignIDs() {
-    int newId = 1;
-
-    Map<String, String> driverIdMap = {};
-
-    for (var item in data) {
-      String driver = item['driver_name'];
-
-      if (!driverIdMap.containsKey(driver)) {
-        driverIdMap[driver] = newId.toString();
-        newId++;
-      }
-
-      item['id'] = driverIdMap[driver]!;
-    }
-
-    nextId = newId;
-
-    update();
-  }
+ 
 
   String vouchertypeid = "1";
   String branchids = "";
@@ -168,6 +149,63 @@ class AddDayBookController extends MyController {
     }
     return totalNet.toString();
   }
+
+Future<void> addVehicleData(
+  Map<String, dynamic> maindata,
+) async {
+  String vehicleId = maindata["vehicle_id"].toString();
+  String vehicleName = maindata["vehicle_name"].toString();
+
+  int index = data.indexWhere(
+    (item) => item["vehicle_id"].toString() == vehicleId,
+  );
+
+  if (index != -1) {
+    data[index]["vehicles_data"].add(maindata);
+  } else {
+    data.add({
+      "vehicle_index": data.length,
+      "vehicle_id": vehicleId,
+      "vehicle_name": vehicleName,
+      "vehicles_data": [maindata],
+    });
+  }
+
+  update();
+}
+
+void removeVehicleDataItem(
+  int vehicleIndex,
+  int dataIndex,
+) {
+  if (vehicleIndex < 0 || vehicleIndex >= data.length) {
+    return; 
+  }
+
+  List<dynamic> vehiclesData = data[vehicleIndex]["vehicles_data"];
+
+
+  if (dataIndex < 0 || dataIndex >= vehiclesData.length) {
+    return; 
+  }
+
+  vehiclesData.removeAt(dataIndex);
+
+ 
+  if (vehiclesData.isEmpty) {
+    data.removeAt(vehicleIndex);
+  }
+
+  for (int i = 0; i < data.length; i++) {
+    data[i]["vehicle_index"] = i;
+  }
+}
+
+
+void clearMainData(){
+  
+}
+
 
   @override
   void dispose() {
