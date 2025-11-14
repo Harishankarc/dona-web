@@ -287,6 +287,42 @@ class APIService {
     }
   }
 
+  static Future<Map<String, dynamic>> addVoucherAPI(
+      String serialcode,
+      String createdby,
+      String voucherdate,
+      String branchid,
+      List<dynamic> voucherentry) async {
+    try {
+      print({
+        "serial_code": serialcode,
+        "created_by": createdby,
+        "voucher_date": voucherdate,
+        "branch_id": branchid,
+        "vehicles": voucherentry
+      });
+      final data = {
+        "serial_code": serialcode,
+        "created_by": createdby,
+        "voucher_date": voucherdate,
+        "branch_id": branchid,
+        "vehicles": voucherentry
+      };
+      final response = await dio.post(
+        'voucher/createvoucher',
+        data: data,
+      );
+      print(response.data);
+      return response.data;
+    } on DioException catch (e) {
+      print(e);
+      throw Exception(e);
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    }
+  }
+
   static Future<Map<String, dynamic>> addLeaveVoucherAPI(
       String serialcode,
       String vehicleid,
@@ -3655,69 +3691,6 @@ class APIService {
     try {
       final response = await dio.post('/vouchertype/getvouchertypedetails',
           data: {"voucher_type_id": vouchertypeid});
-      return response.data;
-    } catch (e) {
-      throw Exception('Failed to fetch response: $e');
-    }
-  }
-
-  static Future<Map<String, dynamic>> postAddVoucherAPI(
-      String serialcode,
-      String vouchertype,
-      String voucherdate,
-      String refnumber,
-      String paymentmethod,
-      String bankname,
-      String cardno,
-      String chequeno,
-      String chequedate,
-      List<dynamic> entries,
-      String currencyid,
-      String currency,
-      String exchangerate,
-      String branchid,
-      String costcenter,
-      String createdby,
-      String callback) async {
-    print({
-      "serial_code": serialcode,
-      "voucher_type": vouchertype,
-      "voucher_date": voucherdate,
-      "ref_number": refnumber,
-      "paymentmethod": paymentmethod,
-      "bankname": bankname,
-      "cardno": cardno,
-      "chequeno": chequeno,
-      "chequedate": chequedate,
-      "voucherslist": entries,
-      "currency_id": currencyid,
-      "currency": currency,
-      "exchange_rate": exchangerate,
-      "branch_id": branchid,
-      "cost_center": costcenter,
-      "created_by": createdby,
-      "callback": callback
-    });
-    try {
-      final response = await dio.post('/voucher/addjournalvoucher', data: {
-        "serial_code": serialcode,
-        "voucher_type": vouchertype,
-        "voucher_date": voucherdate,
-        "ref_number": refnumber,
-        "paymentmethod": paymentmethod,
-        "bankname": bankname,
-        "cardno": cardno,
-        "chequeno": chequeno,
-        "chequedate": chequedate,
-        "voucherslist": entries,
-        "currency_id": currencyid,
-        "currency": currency,
-        "exchange_rate": exchangerate,
-        "branch_id": branchid,
-        "cost_center": costcenter,
-        "created_by": createdby,
-        "callback": callback
-      });
       return response.data;
     } catch (e) {
       throw Exception('Failed to fetch response: $e');

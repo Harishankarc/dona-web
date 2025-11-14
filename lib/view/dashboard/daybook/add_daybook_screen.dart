@@ -156,11 +156,7 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
     });
   }
 
- 
-
- 
-
-Widget buildMainTables() {
+  Widget buildMainTables() {
     if (controller.data.isEmpty) {
       return MyContainer.bordered(
         width: double.infinity,
@@ -181,7 +177,7 @@ Widget buildMainTables() {
     }
 
     List<Widget> allRows = [];
-    int globalRowIndex = 0; 
+    int globalRowIndex = 0;
 
     for (var mainElement in controller.data) {
       int vehicleIndex = controller.data.indexOf(mainElement);
@@ -357,7 +353,6 @@ Widget buildMainTables() {
     );
   }
 
-
   Map<String, double> _calculateVehicleTotals(List<dynamic> items) {
     double totalHour = 0;
     double totalAmount = 0;
@@ -385,41 +380,40 @@ Widget buildMainTables() {
     };
   }
 
+  Future<Map<String, double>> calculateAllVehicleTotals(
+      List<dynamic> data) async {
+    double totalHour = 0;
+    double totalAmount = 0;
+    double totalShiftingCharge = 0;
+    double totalDriverSalary = 0;
+    double totalDriverBata = 0;
 
-  Future<Map<String, double>> calculateAllVehicleTotals(List<dynamic> data) async {
-  double totalHour = 0;
-  double totalAmount = 0;
-  double totalShiftingCharge = 0;
-  double totalDriverSalary = 0;
-  double totalDriverBata = 0;
-
-  for (var vehicle in data) {
-    List<dynamic> items = vehicle['vehicles_data'] ?? [];
-    for (var item in items) {
-      totalHour += double.tryParse(item['hour']?.toString() ?? '0') ?? 0;
-      totalAmount += double.tryParse(item['amount']?.toString() ?? '0') ?? 0;
-      totalShiftingCharge +=
-          double.tryParse(item['shifting_charge']?.toString() ?? '0') ?? 0;
-      totalDriverSalary +=
-          double.tryParse(item['driver_salary']?.toString() ?? '0') ?? 0;
-      totalDriverBata +=
-          double.tryParse(item['driver_bata']?.toString() ?? '0') ?? 0;
+    for (var vehicle in data) {
+      List<dynamic> items = vehicle['vehicles_data'] ?? [];
+      for (var item in items) {
+        totalHour += double.tryParse(item['hour']?.toString() ?? '0') ?? 0;
+        totalAmount += double.tryParse(item['amount']?.toString() ?? '0') ?? 0;
+        totalShiftingCharge +=
+            double.tryParse(item['shifting_charge']?.toString() ?? '0') ?? 0;
+        totalDriverSalary +=
+            double.tryParse(item['driver_salary']?.toString() ?? '0') ?? 0;
+        totalDriverBata +=
+            double.tryParse(item['driver_bata']?.toString() ?? '0') ?? 0;
+      }
     }
+
+    double netTotal =
+        totalAmount + totalShiftingCharge + totalDriverSalary + totalDriverBata;
+
+    return {
+      'hour': totalHour,
+      'amount': totalAmount,
+      'shifting_charge': totalShiftingCharge,
+      'driver_salary': totalDriverSalary,
+      'driver_bata': totalDriverBata,
+      'net_total': netTotal,
+    };
   }
-
-  double netTotal =
-      totalAmount + totalShiftingCharge + totalDriverSalary + totalDriverBata;
-
-  return {
-    'hour': totalHour,
-    'amount': totalAmount,
-    'shifting_charge': totalShiftingCharge,
-    'driver_salary': totalDriverSalary,
-    'driver_bata': totalDriverBata,
-    'net_total': netTotal,
-  };
-}
-
 
   Widget _totalCell(String text, {double? width, int? flex}) {
     final child = Padding(
@@ -469,7 +463,7 @@ Widget buildMainTables() {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-          height: 160,
+            height: 160,
             width: double.infinity,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -502,246 +496,282 @@ Widget buildMainTables() {
                   color: contentTheme.textBorder,
                 ),
                 SizedBox(
-                  width: 700,
-                  height: 160,
-                  child: FutureBuilder(future: calculateAllVehicleTotals(controller.data), builder: (context,snapshot){
-
-                    dynamic calculatedvalue = snapshot.data;
-                    return Column(
-                    children: [
-                      Padding(
-                        padding: MySpacing.x(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: MyText.bodyMedium(
-                                  "Total Hours",
-                                  fontWeight: 600,
-                                  fontSize: 15,
+                    width: 700,
+                    height: 160,
+                    child: FutureBuilder(
+                        future: calculateAllVehicleTotals(controller.data),
+                        builder: (context, snapshot) {
+                          dynamic calculatedvalue = snapshot.data;
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: MySpacing.x(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyText.bodyMedium(
+                                          "Total Hours",
+                                          fontWeight: 600,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: MyText.bodyLarge(
+                                          snapshot.connectionState ==
+                                                  ConnectionState.done
+                                              ? num.parse(
+                                                      calculatedvalue["hour"]
+                                                          .toString())
+                                                  .toStringAsFixed(2)
+                                              : "0.00",
+                                          fontWeight: 700,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: MyText.bodyLarge(
-                                 snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["hour"].toString()).toStringAsFixed(2):
-                                      "0.00",
-                                  fontWeight: 700,
-                                  fontSize: 16,
+                              Divider(
+                                height: 2,
+                                thickness: 0.8,
+                                color: contentTheme.textBorder,
+                              ),
+                              Padding(
+                                padding: MySpacing.x(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyText.bodyMedium(
+                                          "Total Amount",
+                                          fontWeight: 600,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: MyText.bodyLarge(
+                                          snapshot.connectionState ==
+                                                  ConnectionState.done
+                                              ? num.parse(
+                                                      calculatedvalue["amount"]
+                                                          .toString())
+                                                  .toStringAsFixed(2)
+                                              : "0.00",
+                                          fontWeight: 700,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 2,
-                        thickness: 0.8,
-                        color: contentTheme.textBorder,
-                      ),
-                      Padding(
-                        padding: MySpacing.x(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: MyText.bodyMedium(
-                                  "Total Amount",
-                                  fontWeight: 600,
-                                  fontSize: 15,
+                              Divider(
+                                height: 2,
+                                thickness: 0.8,
+                                color: contentTheme.textBorder,
+                              ),
+                              Padding(
+                                padding: MySpacing.x(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyText.bodyMedium(
+                                          "Total Shifting Charge",
+                                          fontWeight: 600,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: MyText.bodyLarge(
+                                          snapshot.connectionState ==
+                                                  ConnectionState.done
+                                              ? num.parse(calculatedvalue[
+                                                          "shifting_charge"]
+                                                      .toString())
+                                                  .toStringAsFixed(2)
+                                              : "0.00",
+                                          fontWeight: 700,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: MyText.bodyLarge(
-                                 snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["amount"].toString()).toStringAsFixed(2):
-                                      "0.00",
-                                  fontWeight: 700,
-                                  fontSize: 16,
+                              Divider(
+                                height: 2,
+                                thickness: 0.8,
+                                color: contentTheme.textBorder,
+                              ),
+                              Padding(
+                                padding: MySpacing.x(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyText.bodyMedium(
+                                          "Total Salary",
+                                          fontWeight: 600,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: MyText.bodyLarge(
+                                          snapshot.connectionState ==
+                                                  ConnectionState.done
+                                              ? num.parse(calculatedvalue[
+                                                          "driver_salary"]
+                                                      .toString())
+                                                  .toStringAsFixed(2)
+                                              : "0.00",
+                                          fontWeight: 700,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                        Divider(
-                        height: 2,
-                        thickness: 0.8,
-                        color: contentTheme.textBorder,
-                      ),
-                      Padding(
-                        padding: MySpacing.x(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: MyText.bodyMedium(
-                                  "Total Shifting Charge",
-                                  fontWeight: 600,
-                                  fontSize: 15,
+                              Divider(
+                                height: 2,
+                                thickness: 0.8,
+                                color: contentTheme.textBorder,
+                              ),
+                              Padding(
+                                padding: MySpacing.x(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyText.bodyMedium(
+                                          "Total Bata",
+                                          fontWeight: 600,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: MyText.bodyLarge(
+                                          snapshot.connectionState ==
+                                                  ConnectionState.done
+                                              ? num.parse(calculatedvalue[
+                                                          "driver_bata"]
+                                                      .toString())
+                                                  .toStringAsFixed(2)
+                                              : "0.00",
+                                          fontWeight: 700,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: MyText.bodyLarge(
-                                 snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["shifting_charge"].toString()).toStringAsFixed(2):
-                                      "0.00",
-                                  fontWeight: 700,
-                                  fontSize: 16,
+                              Divider(
+                                height: 2,
+                                thickness: 0.8,
+                                color: contentTheme.textBorder,
+                              ),
+                              Padding(
+                                padding: MySpacing.x(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyText.bodyMedium(
+                                          "Net Total",
+                                          fontWeight: 800,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      height: 25,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: MyText.bodyLarge(
+                                          snapshot.connectionState ==
+                                                  ConnectionState.done
+                                              ? num.parse(calculatedvalue[
+                                                          "net_total"]
+                                                      .toString())
+                                                  .toStringAsFixed(2)
+                                              : "0.00",
+                                          fontWeight: 800,
+                                          fontSize: 17,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 2,
-                        thickness: 0.8,
-                        color: contentTheme.textBorder,
-                      ),
-                      Padding(
-                        padding: MySpacing.x(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: MyText.bodyMedium(
-                                  "Total Salary",
-                                  fontWeight: 600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: MyText.bodyLarge(
-                                   snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["driver_salary"].toString()).toStringAsFixed(2):
-                                      "0.00",
-                                  fontWeight: 700,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 2,
-                        thickness: 0.8,
-                        color: contentTheme.textBorder,
-                      ),
-                      Padding(
-                        padding: MySpacing.x(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: MyText.bodyMedium(
-                                  "Total Bata",
-                                  fontWeight: 600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: MyText.bodyLarge(
-                                   snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["driver_bata"].toString()).toStringAsFixed(2):
-                                      "0.00",
-                                  fontWeight: 700,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 2,
-                        thickness: 0.8,
-                        color: contentTheme.textBorder,
-                      ),
-                      Padding(
-                        padding: MySpacing.x(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: MyText.bodyMedium(
-                                  "Net Total",
-                                  fontWeight: 800,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 200,
-                              height: 25,
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: MyText.bodyLarge(
-                                   snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["net_total"].toString()).toStringAsFixed(2):
-                                      "0.00",
-                                  fontWeight: 800,
-                                  fontSize: 17,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-
-                  })  )
+                            ],
+                          );
+                        }))
               ],
             ),
           ),
@@ -770,7 +800,19 @@ Widget buildMainTables() {
                 ),
                 MySpacing.width(16),
                 MyButton(
-                  onPressed: () async {},
+                  onPressed: () async {
+                    controller.setLoading(true);
+                    final dynamic response = await controller.addVoucher();
+                    controller.setLoading(false);
+                    if (response["status"] == "success") {
+                      toastMessage(
+                          response['message'].toString(), contentTheme.success);
+                    } else {
+                      controller.setLoading(false);
+                      toastMessage(
+                          response['message'].toString(), contentTheme.danger);
+                    }
+                  },
                   elevation: 0,
                   borderRadiusAll: 8,
                   padding: MySpacing.xy(20, 4),
@@ -1037,7 +1079,7 @@ Widget buildMainTables() {
           "hour": controller.timeWorkController.text,
           "rate": controller.rateController.text,
           "amount": controller.amountController.text,
-          "need_shift": controller.selectedVehicle["need_shift"].toString(),
+          "need_shift": controller.selectedVehicle["need_shifting"].toString(),
           "shifting_charge": controller.shiftingChargeController.text,
           "driver_salary": controller.driverSalaryController.text,
           "driver_bata": controller.driverBataController.text,
