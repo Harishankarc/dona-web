@@ -1743,28 +1743,26 @@ class APIService {
   }
 
   static Future<Map<String, dynamic>> getVouchersListAPI(
-      String vouchertypeid,
-      String attributeid,
-      String status,
-      String createdby,
-      String startdate,
-      String enddate,
-      String type,
-      String term,
-      String branchId,
-      String isTransferedOnly) async {
-    try {
-      final response = await dio.post('voucher/voucherslist', data: {
-        "voucher_type_id": vouchertypeid,
-        "attribute_id": attributeid,
-        "status": status,
-        "created_by": createdby,
+    String vouchertypeid,
+    String startdate,
+    String enddate,
+    String term,
+    String branchId,
+  ) async {
+    print({
         "start_date": startdate,
         "end_date": enddate,
-        "type": type,
         "term": term,
+        "voucher_type_id": vouchertypeid,
         "branch_id": branchId,
-        "is_transfered_only": isTransferedOnly
+      });
+    try {
+      final response = await dio.post('voucher/voucherslist', data: {
+        "start_date": startdate,
+        "end_date": enddate,
+        "term": term,
+        "voucher_type_id": vouchertypeid,
+        "branch_id": branchId,
       });
       print(response.data);
       return response.data;

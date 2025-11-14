@@ -1,3 +1,4 @@
+import 'package:LeLaundrette/controller/dashboard/daybook/daybook_list_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -32,7 +33,7 @@ class DayBookListScreen extends StatefulWidget {
 
 class _DayBookListScreenState extends State<DayBookListScreen>
     with SingleTickerProviderStateMixin, UIMixin {
-  late RentalListController controller = Get.put(RentalListController());
+  late DaybookListController controller = Get.put(DaybookListController());
   late OutlineInputBorder _outlineInputBorder;
   late ToastMessageController toastcontroller;
 
@@ -159,36 +160,32 @@ class _DayBookListScreenState extends State<DayBookListScreen>
                   (value) => value['file_id'].toString(),
                   (value) => APIService.formatDate(APIService.stringToDate(
                       value['voucher_date'].toString())),
-                  (value) => value['subledger_name'],
-                  (value) => APIService.formatDate(APIService.stringToDate(
-                      value['voucher_delivery_date'].toString())),
-                  (value) => MyText.labelMedium(
-                      controller.statusMap[value['status']].toString(),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      fontSize: 11,
-                      color: controller.statusColorMap[value['status']] ??
-                          Colors.black,
-                      fontWeight: 600),
+                  (value) => value['total_hour'].toString(),
+                  (value) => value['total_amount'].toString(),
+                  (value) => value['total_shifting_charge'].toString(),
+                  (value) => value['total_driver_salary'].toString(),
+                  (value) => value['total_driver_bata'].toString(),
+                  (value) => value['net_amount'].toString(),
+                  (value) => value['created_by_name'].toString(),
                 ],
                 controller.data,
                 context,
                 isaction: true,
-                actionwidth: 500,
+                actionwidth: 180,
                 actionList: [
                   TableAction(
                     permission: 'rentals_rentals_view',
                     function: (data) async {
-                      controller.setLoading(true);
-                      final requestresponse =
-                          await controller.setVoucherData(data);
-                      controller.setLoading(false);
-                      if (requestresponse['status'] == 'success') {
-                        viewVoucher(data, requestresponse['data']);
-                      } else {
-                        toastMessage(
-                            requestresponse['message'], contentTheme.danger);
-                      }
+                      // controller.setLoading(true);
+                      // final requestresponse =
+                      //     await controller.setVoucherData(data);
+                      // controller.setLoading(false);
+                      // if (requestresponse['status'] == 'success') {
+                      //   viewVoucher(data, requestresponse['data']);
+                      // } else {
+                      //   toastMessage(
+                      //       requestresponse['message'], contentTheme.danger);
+                      // }
                     },
                     iconData: IOUtils.viewIcon,
                     color: contentTheme.success,

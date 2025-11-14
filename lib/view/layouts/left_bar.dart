@@ -111,6 +111,12 @@ class _LeftBarState extends State<LeftBar>
                           route: '/daybook/adddaybook',
                           isCondensed: widget.isCondensed,
                         ),
+                             MenuItem(
+                          permission: 'daybook_daybook_add',
+                          title: 'Vouchers',
+                          route: '/daybook/vouchers',
+                          isCondensed: widget.isCondensed,
+                        ),
                       ]),
                   MenuWidget(
                       permission: 'hr_main',

@@ -6,6 +6,7 @@ import 'package:LeLaundrette/helpers/services/storage/local_storage.dart';
 import 'package:LeLaundrette/view/auth/login_screen.dart';
 import 'package:LeLaundrette/view/dashboard/analytics_screen.dart';
 import 'package:LeLaundrette/view/dashboard/daybook/add_daybook_screen.dart';
+import 'package:LeLaundrette/view/dashboard/daybook/daybook_list_screen.dart';
 import 'package:LeLaundrette/view/dashboard/drivers/driver_list_screen.dart';
 import 'package:LeLaundrette/view/dashboard/settings/branches/branches_list_screen.dart';
 import 'package:LeLaundrette/view/dashboard/settings/users/user_list_screen.dart';
@@ -67,6 +68,13 @@ getPageRoute() {
       page: () => const AddDayBookScreen(),
       middlewares: [PermissionMiddleware(permission: 'daybook_daybook_add')],
     ),
+
+ GetPage(
+      name: '/daybook/vouchers',
+      page: () => const DayBookListScreen(),
+      middlewares: [PermissionMiddleware(permission: 'daybook_daybook_add')],
+    ),
+    
     GetPage(
       name: '/settings/usergroup',
       page: () => const UserGroupScreen(),
