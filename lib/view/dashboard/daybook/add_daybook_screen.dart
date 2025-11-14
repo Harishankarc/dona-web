@@ -194,7 +194,8 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
     };
   }
 
-  Widget buildMainTables() {
+
+Widget buildMainTables() {
     if (controller.data.isEmpty) {
       return MyContainer.bordered(
         width: double.infinity,
@@ -214,106 +215,169 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
       );
     }
 
-    // List<Widget> allRows = [];
+    List<Widget> allRows = [];
+    int globalRowIndex = 0; 
 
-    // for (var vehicle in controller.data) {
-    //   String vehicleName = vehicle["vehicle_name"];
-    //   List<dynamic> items = vehicle["vehicles_data"];
+    for (var mainElement in controller.data) {
+      int vehicleIndex = controller.data.indexOf(mainElement);
+      List<dynamic> vehiclesData = mainElement["vehicles_data"] as List;
 
-    //   for (int i = 0; i < items.length; i++) {
-    //     var item = items[i];
+      for (int subIndex = 0; subIndex < vehiclesData.length; subIndex++) {
+        var subElement = vehiclesData[subIndex];
+        bool isEven = globalRowIndex.isEven;
+        globalRowIndex++;
 
-    //     allRows.add(
-    //       Column(
-    //         children: [
-    //           MyContainer(
-    //             width: double.infinity,
-    //             borderRadiusAll: 3,
-    //             height: 35,
-    //             clipBehavior: Clip.antiAliasWithSaveLayer,
-    //             borderColor: contentTheme.textBorder,
-    //             paddingAll: 0,
-    //             color: i.isEven
-    //                 ? contentTheme.rowevencolor
-    //                 : contentTheme.rowoddcolor,
-    //             child: Row(
-    //               children: [
-    //                 _cell(i == 0 ? vehicle["vehicle_index"].toString() : '',
-    //                     width: columnWidths[0]),
-    //                 _divider(),
-    //                 _cell(vehicleName, width: columnWidths[1]),
-    //                 Column(
-    //                     children: (item["vehicles_data"] as List).map((e) {
-    //                   return Row(
-    //                     children: [],
-    //                   );
-    //                 }).toList()),
-    //               ],
-    //             ),
-    //           ),
-    //           Divider(
-    //             height: 1,
-    //             thickness: 0.8,
-    //             color: contentTheme.textBorder,
-    //           )
-    //         ],
-    //       ),
-    //     );
-    //   }
+        allRows.add(
+          Column(
+            children: [
+              MyContainer(
+                width: double.infinity,
+                borderRadiusAll: 3,
+                height: 35,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                borderColor: contentTheme.textBorder,
+                paddingAll: 0,
+                color: isEven
+                    ? contentTheme.rowevencolor
+                    : contentTheme.rowoddcolor,
+                child: Row(
+                  children: [
+                    _cell(
+                      subIndex == 0
+                          ? mainElement["vehicle_index"].toString()
+                          : '',
+                      width: columnWidths[0],
+                    ),
+                    _divider(),
+                    _cell(
+                      subIndex == 0 ? mainElement["vehicle_name"] : '',
+                      width: columnWidths[1],
+                    ),
+                    _divider(),
+                    _cell(subElement['driver_name'], width: columnWidths[2]),
+                    _divider(),
+                    _cell(subElement['customer_name'] ?? '',
+                        width: columnWidths[3]),
+                    _divider(),
+                    _cell(subElement['location_name'] ?? '',
+                        flex: columnWidths[4].toInt()),
+                    _divider(),
+                    _cell(subElement['hour']?.toString() ?? '',
+                        flex: columnWidths[5].toInt()),
+                    _divider(),
+                    _cell(subElement['rate']?.toString() ?? '',
+                        flex: columnWidths[6].toInt()),
+                    _divider(),
+                    _cell(subElement['amount']?.toString() ?? '',
+                        flex: columnWidths[7].toInt()),
+                    _divider(),
+                    _cell(subElement['shifting_charge']?.toString() ?? '',
+                        flex: columnWidths[8].toInt()),
+                    _divider(),
+                    _cell(subElement['driver_salary']?.toString() ?? '',
+                        flex: columnWidths[9].toInt()),
+                    _divider(),
+                    _cell(subElement['driver_bata']?.toString() ?? '',
+                        flex: columnWidths[10].toInt()),
+                    _divider(),
+                    _cell(subElement['payment_type_name'] ?? '',
+                        flex: columnWidths[11].toInt()),
+                    _divider(),
+                    _cell(subElement['status_name'] ?? '',
+                        flex: columnWidths[12].toInt()),
+                    _divider(),
+                    SizedBox(
+                      width: columnWidths[13],
+                      height: 35,
+                      child: IconButton(
+                        icon: const Icon(LucideIcons.trash2,
+                            size: 18, color: Colors.red),
+                        onPressed: () {
+                          controller.removeVehicleDataItem(
+                              vehicleIndex, subIndex);
+                          controller.update();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  SizedBox(width: columnWidths[0] + columnWidths[1]),
+                  Expanded(
+                    child: Divider(
+                      height: 1,
+                      thickness: 0.8,
+                      color: contentTheme.textBorder,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      }
 
-    //   /// CALCULATE TOTALS FOR THIS VEHICLE
-    //   Map<String, double> totals = _calculateDayBookTotals(items);
+      // Add totals row for this vehicle if needed
+      if (vehiclesData.isNotEmpty) {
+        Map<String, double> totals = _calculateVehicleTotals(vehiclesData);
 
-    //   allRows.add(
-    //     Column(
-    //       children: [
-    //         MyContainer(
-    //           width: double.infinity,
-    //           height: 40,
-    //           borderRadiusAll: 3,
-    //           borderColor: contentTheme.textBorder,
-    //           color: Colors.amber.shade200,
-    //           paddingAll: 0,
-    //           child: Row(
-    //             children: [
-    //               _totalCell("Total", width: columnWidths[0]),
-    //               _divider(),
-    //               _totalCell(vehicleName, width: columnWidths[1]),
-    //               _divider(),
-    //               _emptyCell(width: columnWidths[2]),
-    //               _divider(),
-    //               _emptyCell(flex: columnWidths[3].toInt()),
-    //               _divider(),
-    //               _totalCell(totals['hour']!.toStringAsFixed(2),
-    //                   flex: columnWidths[4].toInt()),
-    //               _divider(),
-    //               _emptyCell(flex: columnWidths[5].toInt()),
-    //               _divider(),
-    //               _totalCell(totals['amount']!.toStringAsFixed(2),
-    //                   flex: columnWidths[6].toInt()),
-    //               _divider(),
-    //               _totalCell(totals['shifting_charge']!.toStringAsFixed(2),
-    //                   flex: columnWidths[7].toInt()),
-    //               _divider(),
-    //               _totalCell(totals['driver_salary']!.toStringAsFixed(2),
-    //                   flex: columnWidths[8].toInt()),
-    //               _divider(),
-    //               _totalCell(totals['driver_bata']!.toStringAsFixed(2),
-    //                   flex: columnWidths[9].toInt()),
-    //               _divider(),
-    //               _emptyCell(flex: columnWidths[10].toInt()),
-    //               _divider(),
-    //               _emptyCell(flex: columnWidths[11].toInt()),
-    //               _divider(),
-    //               SizedBox(width: columnWidths[12]),
-    //             ],
-    //           ),
-    //         ),
-    //         Divider(height: 1, thickness: 0.8, color: contentTheme.textBorder),
-    //       ],
-    //     ),
-    //   );
-    // }
+        allRows.add(
+          Column(
+            children: [
+              MyContainer(
+                width: double.infinity,
+                height: 40,
+                borderRadiusAll: 3,
+                borderColor: contentTheme.textBorder,
+                color: Colors.amber.shade200,
+                paddingAll: 0,
+                child: Row(
+                  children: [
+                    _totalCell("Total", width: columnWidths[0]),
+                    _divider(),
+                    _totalCell(mainElement["vehicle_name"],
+                        width: columnWidths[1]),
+                    _divider(),
+                    _emptyCell(width: columnWidths[2]),
+                    _divider(),
+                    _emptyCell(width: columnWidths[3]),
+                    _divider(),
+                    _emptyCell(flex: columnWidths[4].toInt()),
+                    _divider(),
+                    _totalCell(totals['hour']!.toStringAsFixed(2),
+                        flex: columnWidths[5].toInt()),
+                    _divider(),
+                    _emptyCell(flex: columnWidths[6].toInt()),
+                    _divider(),
+                    _totalCell(totals['amount']!.toStringAsFixed(2),
+                        flex: columnWidths[7].toInt()),
+                    _divider(),
+                    _totalCell(totals['shifting_charge']!.toStringAsFixed(2),
+                        flex: columnWidths[8].toInt()),
+                    _divider(),
+                    _totalCell(totals['driver_salary']!.toStringAsFixed(2),
+                        flex: columnWidths[9].toInt()),
+                    _divider(),
+                    _totalCell(totals['driver_bata']!.toStringAsFixed(2),
+                        flex: columnWidths[10].toInt()),
+                    _divider(),
+                    _emptyCell(flex: columnWidths[11].toInt()),
+                    _divider(),
+                    _emptyCell(flex: columnWidths[12].toInt()),
+                    _divider(),
+                    SizedBox(width: columnWidths[13]),
+                  ],
+                ),
+              ),
+              Divider(
+                  height: 1, thickness: 0.8, color: contentTheme.textBorder),
+            ],
+          ),
+        );
+      }
+    }
 
     return MyContainer.bordered(
       width: double.infinity,
@@ -323,81 +387,38 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
       paddingAll: 0,
       child: SingleChildScrollView(
         child: Column(
-            children: controller.data.map((mainelement) {
-          return MyContainer(
-                         width: double.infinity,
-                borderRadiusAll: 3,
-                height: 35,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                borderColor: contentTheme.textBorder,
-                paddingAll: 0,
-                color: controller.data.indexOf(mainelement) .isEven
-                    ? contentTheme.rowevencolor
-                    : contentTheme.rowoddcolor,
-            child: Row(
-              children: [
-                _cell(mainelement["vehicle_index"].toString(),
-                    width: columnWidths[0]),
-                _divider(),
-                _cell(mainelement["vehicle_name"], width: columnWidths[1]),
-                Column(
-                  children:
-                      (mainelement["vehicles_data"] as List).map((subelement) {
-                    return Row(
-                      children: [
-                        _divider(),
-                        _cell(subelement['driver_name'], width: columnWidths[2]),
-                        _divider(),
-                        _cell(subelement['location_name'],
-                            flex: columnWidths[3].toInt()),
-                        _divider(),
-                        _cell(subelement['hour'], flex: columnWidths[4].toInt()),
-                        _divider(),
-                        _cell(subelement['rate'], flex: columnWidths[5].toInt()),
-                        _divider(),
-                        _cell(subelement['amount'],
-                            flex: columnWidths[6].toInt()),
-                        _divider(),
-                        _cell(subelement['shifting_charge'],
-                            flex: columnWidths[7].toInt()),
-                        _divider(),
-                        _cell(subelement['driver_salary'],
-                            flex: columnWidths[8].toInt()),
-                        _divider(),
-                        _cell(subelement['driver_bata'],
-                            flex: columnWidths[9].toInt()),
-                        _divider(),
-                        _cell(subelement['payment_type_name'],
-                            flex: columnWidths[10].toInt()),
-                        _divider(),
-                        _cell(subelement['status_name'],
-                            flex: columnWidths[11].toInt()),
-                        _divider(),
-                        SizedBox(
-                          width: columnWidths[12],
-                          height: 35,
-                          child: IconButton(
-                            icon: const Icon(LucideIcons.delete,
-                                size: 20, color: Colors.black),
-                            onPressed: () {
-                              // controller.removeVehicleDataItem(
-                              //   vehicle["vehicle_index"],
-                              //   i,
-                              // );
-                              controller.update();
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                )
-              ],
-            ),
-          );
-        }).toList()),
+          children: allRows,
+        ),
       ),
     );
+  }
+
+
+  Map<String, double> _calculateVehicleTotals(List<dynamic> items) {
+    double totalHour = 0;
+    double totalAmount = 0;
+    double totalShiftingCharge = 0;
+    double totalDriverSalary = 0;
+    double totalDriverBata = 0;
+
+    for (var item in items) {
+      totalHour += double.tryParse(item['hour']?.toString() ?? '0') ?? 0;
+      totalAmount += double.tryParse(item['amount']?.toString() ?? '0') ?? 0;
+      totalShiftingCharge +=
+          double.tryParse(item['shifting_charge']?.toString() ?? '0') ?? 0;
+      totalDriverSalary +=
+          double.tryParse(item['driver_salary']?.toString() ?? '0') ?? 0;
+      totalDriverBata +=
+          double.tryParse(item['driver_bata']?.toString() ?? '0') ?? 0;
+    }
+
+    return {
+      'hour': totalHour,
+      'amount': totalAmount,
+      'shifting_charge': totalShiftingCharge,
+      'driver_salary': totalDriverSalary,
+      'driver_bata': totalDriverBata,
+    };
   }
 
   // Widget buildMainTables() {
