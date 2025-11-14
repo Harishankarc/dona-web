@@ -114,42 +114,9 @@ class AddDayBookController extends MyController {
     }
   }
 
-  // Calculate totals
-  String calculateTotal(List<dynamic> items) {
-    double total = 0;
-    for (var item in items) {
-      double rate = double.tryParse(item['rate']?.toString() ?? '0') ?? 0;
-      double quantity =
-          double.tryParse(item['quantity']?.toString() ?? '0') ?? 0;
-      total += rate * quantity;
-    }
-    return total.toString();
-  }
 
-  String calculateTotalTax(List<dynamic> items) {
-    double totalTax = 0;
-    for (var item in items) {
-      double rate = double.tryParse(item['rate']?.toString() ?? '0') ?? 0;
-      double quantity =
-          double.tryParse(item['quantity']?.toString() ?? '0') ?? 0;
-      double taxPercentage =
-          double.tryParse(item['tax_percentage']?.toString() ?? '0') ?? 0;
-      totalTax += (rate * quantity) * (taxPercentage / 100);
-    }
-    return totalTax.toString();
-  }
 
-  String calculateTotalNet(List<dynamic> items) {
-    double totalNet = 0;
-    for (var item in items) {
-      double net = double.tryParse(item['net']?.toString() ?? '0') ?? 0;
-      double quantity =
-          double.tryParse(item['quantity']?.toString() ?? '0') ?? 0;
-      totalNet += net * quantity;
-    }
-    return totalNet.toString();
-  }
-
+  
 Future<void> addVehicleData(
   Map<String, dynamic> maindata,
 ) async {

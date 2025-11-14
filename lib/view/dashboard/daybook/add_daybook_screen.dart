@@ -156,44 +156,9 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
     });
   }
 
-  Map<String, List<dynamic>> _groupDataByCustomer() {
-    Map<String, List<dynamic>> grouped = {};
-    for (var item in controller.data) {
-      String customerKey = item['customer_name']?.toString() ?? 'Unknown';
-      grouped.putIfAbsent(customerKey, () => []);
-      grouped[customerKey]!.add(item);
-    }
-    return grouped;
-  }
+ 
 
-  Map<String, double> _calculateDayBookTotals(List<dynamic> items) {
-    double totalTimeWork = 0;
-    double totalAmount = 0;
-    double totalShiftingCharge = 0;
-    double totalDriverSalary = 0;
-    double totalDriverBata = 0;
-
-    for (var item in items) {
-      totalTimeWork +=
-          double.tryParse(item['time_work']?.toString() ?? '0') ?? 0;
-      totalAmount += double.tryParse(item['amount']?.toString() ?? '0') ?? 0;
-      totalShiftingCharge +=
-          double.tryParse(item['shifting_charge']?.toString() ?? '0') ?? 0;
-      totalDriverSalary +=
-          double.tryParse(item['driver_salary']?.toString() ?? '0') ?? 0;
-      totalDriverBata +=
-          double.tryParse(item['driver_bata']?.toString() ?? '0') ?? 0;
-    }
-
-    return {
-      'time_work': totalTimeWork,
-      'amount': totalAmount,
-      'shifting_charge': totalShiftingCharge,
-      'driver_salary': totalDriverSalary,
-      'driver_bata': totalDriverBata,
-    };
-  }
-
+ 
 
 Widget buildMainTables() {
     if (controller.data.isEmpty) {
@@ -319,7 +284,6 @@ Widget buildMainTables() {
         );
       }
 
-      // Add totals row for this vehicle if needed
       if (vehiclesData.isNotEmpty) {
         Map<String, double> totals = _calculateVehicleTotals(vehiclesData);
 
@@ -421,168 +385,41 @@ Widget buildMainTables() {
     };
   }
 
-  // Widget buildMainTables() {
-  //   if (controller.data.isEmpty) {
-  //     return MyContainer.bordered(
-  //       width: double.infinity,
-  //       borderRadiusAll: 3,
-  //       clipBehavior: Clip.antiAliasWithSaveLayer,
-  //       borderColor: contentTheme.textBorder,
-  //       paddingAll: 0,
-  //       child: Container(
-  //         height: 200,
-  //         alignment: Alignment.center,
-  //         child: const MyText.bodyMedium(
-  //           "No data available",
-  //           fontWeight: 500,
-  //           color: Colors.grey,
-  //         ),
-  //       ),
-  //     );
-  //   }
 
-  //   Map<String, List<dynamic>> groupedData = _groupDataByCustomer();
-  //   List<Widget> allRows = [];
-  //   int globalIndex = 0;
+  Future<Map<String, double>> calculateAllVehicleTotals(List<dynamic> data) async {
+  double totalHour = 0;
+  double totalAmount = 0;
+  double totalShiftingCharge = 0;
+  double totalDriverSalary = 0;
+  double totalDriverBata = 0;
 
-  //   groupedData.forEach((driverName, items) {
-  //     for (int i = 0; i < items.length; i++) {
-  //       globalIndex++;
-  //       dynamic item = items[i];
+  for (var vehicle in data) {
+    List<dynamic> items = vehicle['vehicles_data'] ?? [];
+    for (var item in items) {
+      totalHour += double.tryParse(item['hour']?.toString() ?? '0') ?? 0;
+      totalAmount += double.tryParse(item['amount']?.toString() ?? '0') ?? 0;
+      totalShiftingCharge +=
+          double.tryParse(item['shifting_charge']?.toString() ?? '0') ?? 0;
+      totalDriverSalary +=
+          double.tryParse(item['driver_salary']?.toString() ?? '0') ?? 0;
+      totalDriverBata +=
+          double.tryParse(item['driver_bata']?.toString() ?? '0') ?? 0;
+    }
+  }
 
-  //       allRows.add(
-  //         Column(
-  //           children: [
-  //             MyContainer(
-  //               width: double.infinity,
-  //               borderRadiusAll: 3,
-  //               height: 35,
-  //               clipBehavior: Clip.antiAliasWithSaveLayer,
-  //               borderColor: contentTheme.textBorder,
-  //               paddingAll: 0,
-  //               color: globalIndex.isEven
-  //                   ? contentTheme.rowevencolor
-  //                   : contentTheme.rowoddcolor,
-  //               child: Row(
-  //                 children: [
-  //                   _cell(i == 0 ? item['id'].toString() : '',
-  //                       width: columnWidths[0]),
-  //                   _divider(),
-  //                   _cell(item['vehicle_name'], width: columnWidths[1]),
-  //                   _divider(),
-  //                   _cell(i == 0 ? item['driver_name'].toString() : '',
-  //                       width: columnWidths[2]),
-  //                   _divider(),
-  //                   _cell(item['location'], flex: columnWidths[3].toInt()),
-  //                   _divider(),
-  //                   _cell(item['time_work'], flex: columnWidths[4].toInt()),
-  //                   _divider(),
-  //                   _cell(item['rate'] ?? '', flex: columnWidths[5].toInt()),
-  //                   _divider(),
-  //                   _cell(item['amount'], flex: columnWidths[6].toInt()),
-  //                   _divider(),
-  //                   _cell(item['shifting_charge'],
-  //                       flex: columnWidths[7].toInt()),
-  //                   _divider(),
-  //                   _cell(item['driver_salary'], flex: columnWidths[8].toInt()),
-  //                   _divider(),
-  //                   _cell(item['driver_bata'], flex: columnWidths[9].toInt()),
-  //                   _divider(),
-  //                   _cell(item['payment_type'], flex: columnWidths[10].toInt()),
-  //                   _divider(),
-  //                   _cell(item['status'], flex: columnWidths[11].toInt()),
-  //                   _divider(),
-  //                   SizedBox(
-  //                     width: columnWidths[12],
-  //                     height: 35,
-  //                     child: IconButton(
-  //                       icon: const Icon(LucideIcons.delete,
-  //                           size: 20, color: Colors.black),
-  //                       onPressed: () {
-  //                         // controller.data.removeVehicleDataItem(item);
-  //                         controller.update();
-  //                       },
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             Divider(
-  //               height: 1,
-  //               thickness: 0.8,
-  //               color: contentTheme.textBorder,
-  //             )
-  //           ],
-  //         ),
-  //       );
-  //     }
+  double netTotal =
+      totalAmount + totalShiftingCharge + totalDriverSalary + totalDriverBata;
 
-  //     Map<String, double> totals = _calculateDayBookTotals(items);
+  return {
+    'hour': totalHour,
+    'amount': totalAmount,
+    'shifting_charge': totalShiftingCharge,
+    'driver_salary': totalDriverSalary,
+    'driver_bata': totalDriverBata,
+    'net_total': netTotal,
+  };
+}
 
-  //     allRows.add(
-  //       Column(
-  //         children: [
-  //           MyContainer(
-  //             width: double.infinity,
-  //             height: 40,
-  //             borderRadiusAll: 3,
-  //             borderColor: contentTheme.textBorder,
-  //             color: Colors.amber.shade200,
-  //             paddingAll: 0,
-  //             child: Row(
-  //               children: [
-  //                 _totalCell("Total", width: columnWidths[0]),
-  //                 _divider(),
-  //                 _emptyCell(width: columnWidths[1]),
-  //                 _divider(),
-  //                 _totalCell(driverName, width: columnWidths[2]),
-  //                 _divider(),
-  //                 _emptyCell(flex: columnWidths[3].toInt()),
-  //                 _divider(),
-  //                 _totalCell(totals['time_work']!.toStringAsFixed(2),
-  //                     flex: columnWidths[4].toInt()),
-  //                 _divider(),
-  //                 _emptyCell(flex: columnWidths[5].toInt()),
-  //                 _divider(),
-  //                 _totalCell(totals['amount']!.toStringAsFixed(2),
-  //                     flex: columnWidths[6].toInt()),
-  //                 _divider(),
-  //                 _totalCell(totals['shifting_charge']!.toStringAsFixed(2),
-  //                     flex: columnWidths[7].toInt()),
-  //                 _divider(),
-  //                 _totalCell(totals['driver_salary']!.toStringAsFixed(2),
-  //                     flex: columnWidths[8].toInt()),
-  //                 _divider(),
-  //                 _totalCell(totals['driver_bata']!.toStringAsFixed(2),
-  //                     flex: columnWidths[9].toInt()),
-  //                 _divider(),
-  //                 _emptyCell(flex: columnWidths[10].toInt()),
-  //                 _divider(),
-  //                 _emptyCell(flex: columnWidths[11].toInt()),
-  //                 _divider(),
-  //                 SizedBox(width: columnWidths[12]),
-  //               ],
-  //             ),
-  //           ),
-  //           Divider(height: 1, thickness: 0.8, color: contentTheme.textBorder),
-  //         ],
-  //       ),
-  //     );
-  //   });
-
-  //   return MyContainer.bordered(
-  //     width: double.infinity,
-  //     borderRadiusAll: 3,
-  //     clipBehavior: Clip.antiAliasWithSaveLayer,
-  //     borderColor: contentTheme.textBorder,
-  //     paddingAll: 0,
-  //     child: SingleChildScrollView(
-  //       child: Column(
-  //         children: allRows,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _totalCell(String text, {double? width, int? flex}) {
     final child = Padding(
@@ -624,7 +461,7 @@ Widget buildMainTables() {
     return MyContainer.bordered(
       width: double.infinity,
       borderRadiusAll: 3,
-      height: 270,
+      height: 240,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       borderColor: contentTheme.textBorder,
       paddingAll: 0,
@@ -632,7 +469,7 @@ Widget buildMainTables() {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            height: 200,
+          height: 160,
             width: double.infinity,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -666,8 +503,11 @@ Widget buildMainTables() {
                 ),
                 SizedBox(
                   width: 700,
-                  height: 200,
-                  child: Column(
+                  height: 160,
+                  child: FutureBuilder(future: calculateAllVehicleTotals(controller.data), builder: (context,snapshot){
+
+                    dynamic calculatedvalue = snapshot.data;
+                    return Column(
                     children: [
                       Padding(
                         padding: MySpacing.x(10),
@@ -677,28 +517,26 @@ Widget buildMainTables() {
                           children: [
                             const SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: MyText.bodyMedium(
                                   "Total Hours",
                                   fontWeight: 600,
-                                  fontSize: 17,
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
                             SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: MyText.bodyLarge(
-                                  num.tryParse(controller
-                                              .calculateTotal(controller.data))
-                                          ?.toStringAsFixed(2) ??
+                                 snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["hour"].toString()).toStringAsFixed(2):
                                       "0.00",
                                   fontWeight: 700,
-                                  fontSize: 20,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
@@ -706,7 +544,7 @@ Widget buildMainTables() {
                         ),
                       ),
                       Divider(
-                        height: 5,
+                        height: 2,
                         thickness: 0.8,
                         color: contentTheme.textBorder,
                       ),
@@ -718,36 +556,34 @@ Widget buildMainTables() {
                           children: [
                             const SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: MyText.bodyMedium(
                                   "Total Amount",
                                   fontWeight: 600,
-                                  fontSize: 17,
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
                             SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: MyText.bodyLarge(
-                                  num.tryParse(controller
-                                              .discountcontroller.text)
-                                          ?.toStringAsFixed(2) ??
-                                      '0.00',
+                                 snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["amount"].toString()).toStringAsFixed(2):
+                                      "0.00",
                                   fontWeight: 700,
-                                  fontSize: 20,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Divider(
-                        height: 5,
+                        Divider(
+                        height: 2,
                         thickness: 0.8,
                         color: contentTheme.textBorder,
                       ),
@@ -759,28 +595,65 @@ Widget buildMainTables() {
                           children: [
                             const SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: MyText.bodyMedium(
+                                  "Total Shifting Charge",
+                                  fontWeight: 600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 200,
+                              height: 25,
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: MyText.bodyLarge(
+                                 snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["shifting_charge"].toString()).toStringAsFixed(2):
+                                      "0.00",
+                                  fontWeight: 700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(
+                        height: 2,
+                        thickness: 0.8,
+                        color: contentTheme.textBorder,
+                      ),
+                      Padding(
+                        padding: MySpacing.x(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 200,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: MyText.bodyMedium(
                                   "Total Salary",
                                   fontWeight: 600,
-                                  fontSize: 17,
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
                             SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: MyText.bodyLarge(
-                                  num.tryParse(controller.calculateTotalTax(
-                                              controller.data))
-                                          ?.toStringAsFixed(2) ??
-                                      '0.00',
+                                   snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["driver_salary"].toString()).toStringAsFixed(2):
+                                      "0.00",
                                   fontWeight: 700,
-                                  fontSize: 20,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
@@ -788,7 +661,7 @@ Widget buildMainTables() {
                         ),
                       ),
                       Divider(
-                        height: 5,
+                        height: 2,
                         thickness: 0.8,
                         color: contentTheme.textBorder,
                       ),
@@ -800,28 +673,26 @@ Widget buildMainTables() {
                           children: [
                             const SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: MyText.bodyMedium(
                                   "Total Bata",
                                   fontWeight: 600,
-                                  fontSize: 17,
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
                             SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: MyText.bodyLarge(
-                                  num.tryParse(controller.calculateTotalTax(
-                                              controller.data))
-                                          ?.toStringAsFixed(2) ??
-                                      '0.00',
+                                   snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["driver_bata"].toString()).toStringAsFixed(2):
+                                      "0.00",
                                   fontWeight: 700,
-                                  fontSize: 20,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
@@ -829,7 +700,7 @@ Widget buildMainTables() {
                         ),
                       ),
                       Divider(
-                        height: 5,
+                        height: 2,
                         thickness: 0.8,
                         color: contentTheme.textBorder,
                       ),
@@ -841,31 +712,26 @@ Widget buildMainTables() {
                           children: [
                             const SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: MyText.bodyMedium(
                                   "Net Total",
-                                  fontWeight: 700,
-                                  fontSize: 18,
+                                  fontWeight: 800,
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
                             SizedBox(
                               width: 200,
-                              height: 35,
+                              height: 25,
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: MyText.bodyLarge(
-                                  ((num.tryParse(controller.calculateTotalNet(
-                                                  controller.data)) ??
-                                              0) -
-                                          (num.tryParse(controller
-                                                  .discountcontroller.text) ??
-                                              0))
-                                      .toStringAsFixed(2),
+                                   snapshot.connectionState == ConnectionState.done ? num.parse(calculatedvalue["net_total"].toString()).toStringAsFixed(2):
+                                      "0.00",
                                   fontWeight: 800,
-                                  fontSize: 21,
+                                  fontSize: 17,
                                 ),
                               ),
                             ),
@@ -873,8 +739,9 @@ Widget buildMainTables() {
                         ),
                       ),
                     ],
-                  ),
-                )
+                  );
+
+                  })  )
               ],
             ),
           ),
