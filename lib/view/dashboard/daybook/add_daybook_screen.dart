@@ -265,7 +265,7 @@ class _AddDayBookScreenState extends State<AddDayBookScreen>
               ),
               Row(
                 children: [
-                  SizedBox(width: columnWidths[0] + columnWidths[1]),
+                  SizedBox(width: columnWidths[0] + columnWidths[1] + 8),
                   Expanded(
                     child: Divider(
                       height: 1,

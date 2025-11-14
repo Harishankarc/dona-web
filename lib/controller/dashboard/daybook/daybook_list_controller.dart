@@ -9,13 +9,12 @@ class DaybookListController extends MyController {
   TextEditingController searchcontroller = TextEditingController();
 
   List<dynamic> data = [];
+  List<dynamic> voucherData = [];
 
   bool loading = false;
 
   int page = 1;
   int limit = 20;
-
-  
 
   int totalPages = 0;
 
@@ -28,11 +27,17 @@ class DaybookListController extends MyController {
       '1',
       APIService.formatDate(startDate, true),
       APIService.formatDate(endDate, true),
-      searchcontroller.text,  LocalStorage.getLoggedUserdata()['branchid'].toString()
-   ,
+      searchcontroller.text,
+      LocalStorage.getLoggedUserdata()['branchid'].toString(),
     );
     data = response['data'];
     loading = false;
+    update();
+  }
+
+  Future<void> getVoucherById(String id) async {
+    final response = await APIService.getVoucherDetailsByFileIdAPI(id.toString());
+    voucherData = response['data'];
     update();
   }
 
@@ -41,8 +46,6 @@ class DaybookListController extends MyController {
     update();
   }
 
- 
-  
   void onPreviousPage(int cpage) {
     page = cpage;
     loadData();
@@ -75,12 +78,9 @@ class DaybookListController extends MyController {
     update();
   }
 
- 
   @override
   void onInit() {
     // loadData();
     super.onInit();
   }
-
- 
 }

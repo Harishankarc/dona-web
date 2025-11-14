@@ -806,6 +806,24 @@ class APIService {
     }
   }
 
+  static Future<Map<String, dynamic>> getVoucherDetailsByFileIdAPI(
+    String fileId,
+  ) async {
+    try {
+      final response = await dio.post('voucher/getvoucherdetailsbyfileid', data: {
+        "file_id": fileId,
+      });
+      print(response.data);
+      return response.data;
+    } on DioException catch (e) {
+      print(e);
+      throw Exception(e);
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    }
+  }
+
   static Future<Map<String, dynamic>> getSalesDetailsByFileIdAPINew(
     String fileId,
     String branchId,
